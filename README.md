@@ -121,6 +121,24 @@ This file is used by both agents to maintain consistency and follow project guid
 
 ---
 
+## 📚 Development Resources
+
+### Game Development Reference Guide
+The [game-development-reference-guide.md](./game-development-reference-guide.md) contains comprehensive research on Phaser 3 + TypeScript game development, including:
+
+- Analysis of successful open-source Phaser 3 projects
+- Common development challenges and solutions
+- Best practices for performance optimization
+- Tips for implementing retro pixel art aesthetics
+- Audio management strategies
+- Input handling across different devices
+- Scene and state management patterns
+- TypeScript integration benefits
+
+This guide serves as a valuable reference to prevent over-engineering and help break out of development loops by providing practical, tested approaches to common game development challenges.
+
+---
+
 ## ✅ Next Steps
 ✔️ Review & commit README.txt, project-memory.json, .devcontainer.json (if using), and initial src/main.ts.
 ✔️ Kick off Agent Alpha on the POC branch (map + movement).
