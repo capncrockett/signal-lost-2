@@ -1,0 +1,30 @@
+{
+  "project_goals": [
+    "Browser-based retro 16-bit game",
+    "Agent-generated puzzles, levels, and music",
+    "Fully testable (Vitest + Playwright)"
+  ],
+  "current_phase": "POC",
+  "coding_rules": {
+    "architecture": "modular",
+    "tests": "required for all core modules",
+    "audio": "Tone.js only for POC/MVP",
+    "graphics": "ASCII maps -> tile sprites"
+  },
+  "agent_roles": {
+    "alpha": "feature dev & unit tests",
+    "beta": "QA, lint, docs, E2E tests"
+  },
+  "must": [
+    "compile with no TS errors",
+    "run all unit + E2E tests",
+    "run lint & format checks",
+    "update docs with any public API changes"
+  ],
+  "donot": [
+    "over-engineer UI systems",
+    "add >2 puzzle types before MVP",
+    "depend on external visual editors",
+    "merge without green CI"
+  ]
+}
