@@ -84,38 +84,16 @@ All checks must pass before merging into main.
 ---
 
 ## 🧠 project-memory.json (Agent Seed)
-```json
-{
-  "project_goals": [
-    "Browser-based retro 16-bit game",
-    "Agent-generated puzzles, levels, and music",
-    "Fully testable (Vitest + Playwright)"
-  ],
-  "current_phase": "POC",
-  "coding_rules": {
-    "architecture": "modular",
-    "tests": "required for all core modules",
-    "audio": "Tone.js only in POC/MVP",
-    "graphics": "ASCII maps → tile sprites"
-  },
-  "agent_roles": {
-    "alpha": "feature dev & unit tests",
-    "beta": "QA, lint, docs, E2E tests"
-  },
-  "must": [
-    "compile with no TS errors",
-    "run all unit + E2E tests",
-    "run lint & format checks",
-    "update docs with any public API changes"
-  ],
-  "do_not": [
-    "over-engineer UI systems",
-    "add >2 puzzle types before MVP",
-    "depend on external visual editors",
-    "merge without green CI"
-  ]
-}
-```
+
+The [project-memory.json](./project-memory.json) file serves as the central configuration for AI agents working on this project. It defines:
+
+- **Project Goals**: The high-level objectives for the game
+- **Current Phase**: Development stage (POC, MVP, etc.)
+- **Coding Rules**: Architecture and implementation guidelines
+- **Agent Roles**: Responsibilities for Alpha and Beta agents
+- **Must/Don't Rules**: Required practices and constraints
+
+This file is used by both agents to maintain consistency and follow project guidelines.
 
 ---
 
