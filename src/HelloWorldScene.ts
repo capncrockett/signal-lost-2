@@ -24,12 +24,19 @@ export default class HelloWorldScene extends Phaser.Scene {
 			blendMode: 'ADD',
 		})
 
-		const logo = this.physics.add.image(400, 100, 'logo')
+		const logo = this.physics.add.image(400, 200, 'logo')
 
-		logo.setVelocity(100, 200)
+		// Move the logo horizontally only
+		logo.setVelocity(100, 0)
 		logo.setBounce(1, 1)
 		logo.setCollideWorldBounds(true)
 
 		emitter.startFollow(logo)
+
+		// Update the game state for debugging
+		window.GAME_STATE = {
+			scene: this,
+			logo: logo
+		};
 	}
 }
