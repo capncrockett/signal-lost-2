@@ -1,0 +1,39 @@
+name: CI / Build & Test
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build & Type-check
+        run: npm run build:check
+
+      - name: Run unit tests (Vitest)
+        run: npm run test:unit
+
+      - name: Run E2E tests (Playwright)
+        run: npm run test:e2e
+
+      - name: Lint with ESLint
+        run: npm run lint
+
+      - name: Check formatting with Prettier
+        run: npm run format:check
