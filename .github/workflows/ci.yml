@@ -2,9 +2,9 @@ name: CI / Build & Test
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
   workflow_dispatch:
 
 jobs:
@@ -28,6 +28,9 @@ jobs:
 
       - name: Run unit tests (Vitest)
         run: npm run test:unit
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests (Playwright)
         run: npm run test:e2e
