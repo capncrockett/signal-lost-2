@@ -250,7 +250,7 @@ export class PuzzleEngine {
     }
 
     // Use a key to unlock the door
-    const keyId = this.gameState.player.inventory[0]
+    // Remove the first key from inventory
     this.gameState.player.inventory.splice(0, 1)
 
     // Mark the door as unlocked (inactive)

@@ -39,8 +39,14 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true)
 
     // Set up input
-    this.cursors = config.scene.input.keyboard.createCursorKeys()
-    this.interactKey = config.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E)
+    if (config.scene.input.keyboard) {
+      this.cursors = config.scene.input.keyboard.createCursorKeys()
+      this.interactKey = config.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E)
+    } else {
+      // Fallback if keyboard is not available
+      this.cursors = {} as Phaser.Types.Input.Keyboard.CursorKeys
+      this.interactKey = {} as Phaser.Input.Keyboard.Key
+    }
   }
 
   update(): void {
@@ -52,19 +58,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setVelocity(0)
 
     // Horizontal movement
-    if (this.cursors.left.isDown) {
+    if (this.cursors.left?.isDown) {
       this.setVelocityX(-speed)
       isMoving = true
-    } else if (this.cursors.right.isDown) {
+    } else if (this.cursors.right?.isDown) {
       this.setVelocityX(speed)
       isMoving = true
     }
 
     // Vertical movement
-    if (this.cursors.up.isDown) {
+    if (this.cursors.up?.isDown) {
       this.setVelocityY(-speed)
       isMoving = true
-    } else if (this.cursors.down.isDown) {
+    } else if (this.cursors.down?.isDown) {
       this.setVelocityY(speed)
       isMoving = true
     }
@@ -80,7 +86,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Handle interaction with puzzle elements
-    if (Phaser.Input.Keyboard.JustDown(this.interactKey) && this.puzzleEngine) {
+    if (this.interactKey && Phaser.Input.Keyboard.JustDown(this.interactKey) && this.puzzleEngine) {
       this.interact()
     }
 

@@ -15,13 +15,15 @@ export class DebugOverlay {
     this.createTextObjects()
 
     // Toggle visibility with D key
-    this.scene.input.keyboard.on('keydown-D', () => {
-      this.visible = !this.visible
-      this.gameState.debug.showOverlay = this.visible
-      this.textObjects.forEach(text => {
-        text.setVisible(this.visible)
+    if (this.scene.input.keyboard) {
+      this.scene.input.keyboard.on('keydown-D', () => {
+        this.visible = !this.visible
+        this.gameState.debug.showOverlay = this.visible
+        this.textObjects.forEach(text => {
+          text.setVisible(this.visible)
+        })
       })
-    })
+    }
   }
 
   private createTextObjects(): void {
