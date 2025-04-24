@@ -24,7 +24,7 @@ export default class MenuScene extends Phaser.Scene {
     this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x000000).setOrigin(0, 0).setAlpha(0.8)
 
     // Create title
-    this.title = this.add
+    const title = this.add
       .text(this.cameras.main.centerX, this.cameras.main.height * 0.2, 'SIGNAL LOST', {
         fontFamily: 'monospace',
         fontSize: '48px',

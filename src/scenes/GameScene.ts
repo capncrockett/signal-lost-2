@@ -51,24 +51,26 @@ export default class GameScene extends Phaser.Scene {
     this.audio.playSequence(['C4', 'E4', 'G4'], ['8n', '8n', '8n'], '8n')
 
     // Set up keyboard events for audio control
-    this.input.keyboard.on('keydown-M', () => {
-      const muted = this.audio.toggleMute()
-      console.log(`Audio ${muted ? 'muted' : 'unmuted'}`)
-    })
+    if (this.input.keyboard) {
+      this.input.keyboard.on('keydown-M', () => {
+        const muted = this.audio.toggleMute()
+        console.log(`Audio ${muted ? 'muted' : 'unmuted'}`)
+      })
 
-    // Set up keyboard events for player movement sounds
-    this.input.keyboard.on('keydown-S', () => {
-      if (this.player) {
-        const enabled = this.player.toggleMoveSound()
-        console.log(`Movement sounds ${enabled ? 'enabled' : 'disabled'}`)
-      }
-    })
+      // Set up keyboard events for player movement sounds
+      this.input.keyboard.on('keydown-S', () => {
+        if (this.player) {
+          const enabled = this.player.toggleMoveSound()
+          console.log(`Movement sounds ${enabled ? 'enabled' : 'disabled'}`)
+        }
+      })
 
-    // Set up keyboard event for returning to menu
-    this.input.keyboard.on('keydown-ESC', () => {
-      this.audio.playNote('E4', '8n')
-      this.scene.start('menu')
-    })
+      // Set up keyboard event for returning to menu
+      this.input.keyboard.on('keydown-ESC', () => {
+        this.audio.playNote('E4', '8n')
+        this.scene.start('menu')
+      })
+    }
 
     // Add menu button
     const menuButton = this.add

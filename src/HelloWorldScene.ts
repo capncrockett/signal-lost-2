@@ -16,7 +16,7 @@ export default class HelloWorldScene extends Phaser.Scene {
   create() {
     this.add.image(400, 300, 'sky')
 
-    const particles = this.add.particles('red')
+    const particles = this.add.particles(0, 0, 'red')
 
     const emitter = particles.createEmitter({
       speed: 100,
