@@ -5,15 +5,15 @@ Built in the browser with Phaser 3 + TypeScript + Vite. Fully modular, testable,
 
 ## 🛠️ Tech Stack
 
-| Layer          | Tool                        | Purpose                                          |
-|----------------|-----------------------------|-------------------------------------------------|
-| Engine         | Phaser 3 (v3.60+) + TypeScript | 2D rendering, input, tilemaps, scenes           |
-| Bundler/Dev    | Vite                        | Fast dev server, ES modules, HMR                 |
-| Unit Testing   | Vitest                      | Vite-native test runner with Jest-compatible API |
-| E2E Testing    | Playwright                  | Browser automation for full-flow tests           |
-| Linter/Format  | ESLint + Prettier           | Enforce code style & catch errors                |
-| Audio          | Tone.js                     | Code-defined chiptune melodies & SFX             |
-| CI/CD          | GitHub Actions              | Build → Test → Lint → Format → Merge gate        |
+| Layer         | Tool                           | Purpose                                          |
+| ------------- | ------------------------------ | ------------------------------------------------ |
+| Engine        | Phaser 3 (v3.60+) + TypeScript | 2D rendering, input, tilemaps, scenes            |
+| Bundler/Dev   | Vite                           | Fast dev server, ES modules, HMR                 |
+| Unit Testing  | Vitest                         | Vite-native test runner with Jest-compatible API |
+| E2E Testing   | Playwright                     | Browser automation for full-flow tests           |
+| Linter/Format | ESLint + Prettier              | Enforce code style & catch errors                |
+| Audio         | Tone.js                        | Code-defined chiptune melodies & SFX             |
+| CI/CD         | GitHub Actions                 | Build → Test → Lint → Format → Merge gate        |
 
 ## 📁 Project Structure
 
@@ -43,13 +43,16 @@ Signal-Lost/
 ## 🚀 Quick Start
 
 ```bash
-# 1. Dev server (hot-reload)
+# 1. Install dependencies
+npm install
+
+# 2. Dev server (hot-reload)
 npm run dev
 
-# 2. Build for production
+# 3. Build for production
 npm run build
 
-# 3. Run all checks:
+# 4. Run all checks:
 # Compile & type-check
 npm run build:check
 
@@ -64,12 +67,37 @@ npm run lint
 npm run format:check
 ```
 
+## 🎮 How to Play
+
+1. Start the development server with `npm run dev`
+2. Open your browser to `http://localhost:8000`
+3. Use the arrow keys to move the player character
+4. Push blocks onto targets to solve puzzles
+
+### Controls:
+
+- **Arrow Keys**: Move the player
+- **M**: Toggle audio mute/unmute
+- **S**: Toggle movement sounds
+- **D**: Toggle debug overlay
+
+### Debug Panel:
+
+The game includes a debug panel that shows:
+
+- Player position and inventory
+- Current level information
+- Game progress
+
+This panel can be toggled with the "D" key and provides useful information for development and testing.
+
 ## 🤖 Dual-Agent Workflow
 
 - **Agent Alpha**: Feature Development & Unit Tests
 - **Agent Beta**: QA/Maintainer, Lint, E2E Tests, Documentation
 
 ### PR Gates:
+
 1. `npm run build:check`
 2. `npm run test:unit`
 3. `npm run test:e2e`
@@ -96,6 +124,7 @@ This file is used by both agents to maintain consistency and follow project guid
    https://github.com/dstrph/phaser3-typescript-vite-starter
 
 2. Swap Jest for Vitest:
+
    - Faster, native Vite integration
    - Jest-compatible API, minimal config
 
@@ -104,9 +133,10 @@ This file is used by both agents to maintain consistency and follow project guid
 4. Enable ESLint + Prettier via community configs
 
 5. Expose Debug Hooks in src/main.ts:
+
    ```typescript
-   window.GAME_STATE = gameState;
-   window.getEntity = (id) => scene.findByName(id);
+   window.GAME_STATE = gameState
+   window.getEntity = id => scene.findByName(id)
    ```
 
 6. Follow the Phases (POC → MVP → Phase 1):
@@ -117,6 +147,7 @@ This file is used by both agents to maintain consistency and follow project guid
 ## 📚 Development Resources
 
 ### Game Development Reference Guide
+
 The [game-development-reference-guide.md](./game-development-reference-guide.md) contains comprehensive research on Phaser 3 + TypeScript game development, including:
 
 - Analysis of successful open-source Phaser 3 projects
@@ -130,8 +161,22 @@ The [game-development-reference-guide.md](./game-development-reference-guide.md)
 
 This guide serves as a valuable reference to prevent over-engineering and help break out of development loops by providing practical, tested approaches to common game development challenges.
 
-## ✅ Next Steps
+## ✅ Current Progress
 
-- ✔️ Review & commit README.md, project-memory.json, .devcontainer.json (if using), and initial src/main.ts
-- ✔️ Kick off Agent Alpha on the POC branch (map + movement)
-- ✔️ Kick off Agent Beta to verify tests, linting, and docs
+- ✔️ Basic game structure and architecture
+- ✔️ Player movement and collision
+- ✔️ Level loading from ASCII maps
+- ✔️ Debug overlay for development
+- ✔️ Simple puzzle mechanics (blocks and targets)
+- ✔️ Audio system with Tone.js
+- ✔️ Unit tests for all core modules
+- ✔️ E2E tests for basic functionality
+
+## 🔮 Next Steps
+
+- Add more puzzle types (switches, doors, keys)
+- Create additional levels with increasing difficulty
+- Improve graphics with custom sprites
+- Add story elements and objectives
+- Implement a level editor
+- Add save/load functionality
