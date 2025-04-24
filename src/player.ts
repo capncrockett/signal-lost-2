@@ -13,7 +13,7 @@ export interface PlayerConfig {
 }
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  private cursors: Phaser.Types.Input.Keyboard.CursorKeys
+  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private gameState: GameState
   private audio?: AudioManager
   private speed = 100

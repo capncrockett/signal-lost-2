@@ -9,6 +9,7 @@ export class GameState {
     y: 0,
     health: 100,
     inventory: [] as string[],
+    moveSound: true,
   }
 
   // Level state
