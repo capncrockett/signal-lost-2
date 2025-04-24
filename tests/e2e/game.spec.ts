@@ -44,9 +44,11 @@ const navigateToGame = async (page: any): Promise<void> => {
     console.log('Start Game button not found, checking if already in game scene')
 
     // Check if we're already in the game scene
-    const isInGameScene = await page.evaluate(() => {
-      return window.GAME_STATE && window.GAME_STATE.level && window.GAME_STATE.level.id !== undefined
-    }).catch(() => false)
+    const isInGameScene = await page
+      .evaluate(() => {
+        return window.GAME_STATE && window.GAME_STATE.level && window.GAME_STATE.level.id !== undefined
+      })
+      .catch(() => false)
 
     if (!isInGameScene) {
       // If we're not in the game scene, try to find the button with a different selector
@@ -65,7 +67,6 @@ const navigateToGame = async (page: any): Promise<void> => {
   // Wait for game state to be initialized
   await waitForGameState(page)
 }
-
 test.describe('Signal Lost Game', () => {
   test('game loads and canvas is visible', async ({ page }) => {
     await page.goto('/')
@@ -161,7 +162,10 @@ test.describe('Signal Lost Game', () => {
     await wait(1000)
 
     // Get initial player position from debug overlay
-    const initialPositionText = await page.locator('text').filter({ hasText: /Position:/ }).textContent()
+    const initialPositionText = await page
+      .locator('text')
+      .filter({ hasText: /Position:/ })
+      .textContent()
 
     // Press arrow keys to move the player
     await page.keyboard.press('ArrowRight')
@@ -170,7 +174,10 @@ test.describe('Signal Lost Game', () => {
     await wait(500)
 
     // Get new player position from debug overlay
-    const newPositionText = await page.locator('text').filter({ hasText: /Position:/ }).textContent()
+    const newPositionText = await page
+      .locator('text')
+      .filter({ hasText: /Position:/ })
+      .textContent()
 
     // Verify that the position has changed
     expect(initialPositionText).not.toEqual(newPositionText)
@@ -203,10 +210,7 @@ test.describe('Signal Lost Game', () => {
 
     // Check if level property is properly initialized
     const levelInitialized = await page.evaluate(() => {
-      return (
-        window.GAME_STATE.level.id !== undefined &&
-        window.GAME_STATE.level.entities !== undefined
-      )
+      return window.GAME_STATE.level.id !== undefined && window.GAME_STATE.level.entities !== undefined
     })
 
     expect(levelInitialized).toBeTruthy()

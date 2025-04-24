@@ -8,6 +8,8 @@
 - PR #6: Add new puzzle types: switches, doors, keys, and teleporters
 - PR #13: Fix TypeScript errors and simplify CI workflow
 - PR #16: Fix E2E tests to work with the new menu system
+- PR #17: Add documentation for the menu system
+- PR #18: Add E2E tests for puzzle types
 
 ### ✅ Passing Checks
 
