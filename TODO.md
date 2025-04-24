@@ -34,7 +34,11 @@
 
 ### Medium Priority
 
-- [ ] Improve test coverage for new puzzle types
+- [x] Improve test coverage for new puzzle types
+  - ✅ Added E2E tests for blocks and targets
+  - ✅ Added E2E tests for switches and doors
+  - ✅ Added E2E tests for keys and locked doors
+  - ✅ Added E2E tests for teleporters
 - [ ] Add documentation for the menu system
 - [ ] Create additional levels showcasing the new puzzle types
 
