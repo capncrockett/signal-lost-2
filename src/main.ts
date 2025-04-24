@@ -1,5 +1,8 @@
 import Phaser from 'phaser'
 import GameScene from './scenes/GameScene'
+import MenuScene from './scenes/MenuScene'
+import LevelSelectScene from './scenes/LevelSelectScene'
+import SettingsScene from './scenes/SettingsScene'
 import { GameState } from './state'
 
 // Create a global game state
@@ -26,11 +29,11 @@ const config: Phaser.Types.Core.GameConfig = {
   physics: {
     default: 'arcade',
     arcade: {
-      gravity: { y: 0 }, // No gravity for top-down game
+      gravity: { x: 0, y: 0 }, // No gravity for top-down game
       debug: false,
     },
   },
-  scene: [GameScene],
+  scene: [MenuScene, GameScene, LevelSelectScene, SettingsScene],
 }
 
 const game = new Phaser.Game(config)

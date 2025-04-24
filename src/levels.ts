@@ -19,6 +19,9 @@ const TILE_MAPPING = {
   X: 'target',
   D: 'door',
   K: 'key',
+  S: 'switch',
+  T: 'teleporter',
+  L: 'locked_door',
   ' ': null, // empty space
 }
 
@@ -93,6 +96,67 @@ export const LEVELS: Record<string, LevelData> = {
     #.........#
     #.....X...#
     ###########
+    `
+  ),
+
+  puzzle2: parseAsciiMap(
+    'puzzle2',
+    'Switch Puzzle',
+    `
+    ###########
+    #.........#
+    #...S.....#
+    #....P....#
+    #.........#
+    #.....D...#
+    ###########
+    `
+  ),
+
+  puzzle3: parseAsciiMap(
+    'puzzle3',
+    'Key and Lock Puzzle',
+    `
+    ###########
+    #.........#
+    #...K.....#
+    #....P....#
+    #.........#
+    #.....L...#
+    ###########
+    `
+  ),
+
+  puzzle4: parseAsciiMap(
+    'puzzle4',
+    'Teleporter Puzzle',
+    `
+    ###########
+    #.........#
+    #...T.....#
+    #....P....#
+    #.........#
+    #.....T...#
+    ###########
+    `
+  ),
+
+  puzzle5: parseAsciiMap(
+    'puzzle5',
+    'Combined Puzzle',
+    `
+    #############
+    #.....#.....#
+    #..K..#..T..#
+    #.....L.....#
+    #.....#.....#
+    #..P..#..X..#
+    #.....#.....#
+    #..B..#..S..#
+    #.....#.....#
+    #.....D.....#
+    #.....#.....#
+    #############
     `
   ),
 }

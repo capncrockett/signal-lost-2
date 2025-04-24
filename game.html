@@ -16,14 +16,14 @@
         color: #fff;
         font-family: monospace;
       }
-      
+
       #app {
         position: relative;
         width: 800px;
         height: 600px;
         border: 2px solid #333;
       }
-      
+
       #debug-panel {
         position: absolute;
         top: 10px;
@@ -34,7 +34,7 @@
         font-size: 12px;
         z-index: 1000;
       }
-      
+
       .debug-button {
         background-color: #444;
         color: #fff;
@@ -44,7 +44,7 @@
         border-radius: 3px;
         cursor: pointer;
       }
-      
+
       .debug-button:hover {
         background-color: #666;
       }
@@ -59,11 +59,11 @@
       <button class="debug-button" id="next-level">Next Level</button>
       <div id="api-info">
         <h4>Debug API</h4>
-        <code>window.GAME_STATE</code> - Access game state<br>
+        <code>window.GAME_STATE</code> - Access game state<br />
         <code>window.getEntity(id)</code> - Get entity by ID
       </div>
     </div>
-    
+
     <script type="module" src="/src/main.ts"></script>
     <script>
       // Debug panel functionality
@@ -71,29 +71,33 @@
         // Toggle overlay button
         document.getElementById('toggle-overlay').addEventListener('click', () => {
           if (window.GAME_STATE) {
-            window.GAME_STATE.debug.showOverlay = !window.GAME_STATE.debug.showOverlay;
+            window.GAME_STATE.debug.showOverlay = !window.GAME_STATE.debug.showOverlay
           }
-        });
-        
+        })
+
         // Toggle god mode button
         document.getElementById('toggle-godmode').addEventListener('click', () => {
           if (window.GAME_STATE) {
-            window.GAME_STATE.debug.godMode = !window.GAME_STATE.debug.godMode;
+            window.GAME_STATE.debug.godMode = !window.GAME_STATE.debug.godMode
           }
-        });
-        
+        })
+
         // Next level button
         document.getElementById('next-level').addEventListener('click', () => {
           if (window.GAME_STATE) {
-            // Simple level switching between start and puzzle1
-            const nextLevel = window.GAME_STATE.level.id === 'start' ? 'puzzle1' : 'start';
-            const game = document.querySelector('canvas')?.parentElement?.__PHASER_GAME__;
+            // Level switching between all available levels
+            const levels = ['start', 'puzzle1', 'puzzle2', 'puzzle3', 'puzzle4', 'puzzle5']
+            const currentIndex = levels.indexOf(window.GAME_STATE.level.id)
+            const nextIndex = (currentIndex + 1) % levels.length
+            const nextLevel = levels[nextIndex]
+
+            const game = document.querySelector('canvas')?.parentElement?.__PHASER_GAME__
             if (game) {
-              game.scene.start('game', { levelId: nextLevel });
+              game.scene.start('game', { levelId: nextLevel })
             }
           }
-        });
-      });
+        })
+      })
     </script>
   </body>
 </html>

@@ -12,9 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Test results and reports
+test-results
+playwright-report
+
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+# .vscode is now tracked for team settings sync
 .idea
 .DS_Store
 *.suo
