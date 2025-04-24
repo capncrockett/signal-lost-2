@@ -77,6 +77,7 @@ npm run format:check
 ### Controls:
 
 - **Arrow Keys**: Move the player
+- **E**: Interact with puzzle elements (keys, doors, switches, teleporters)
 - **M**: Toggle audio mute/unmute
 - **S**: Toggle movement sounds
 - **D**: Toggle debug overlay
@@ -168,15 +169,16 @@ This guide serves as a valuable reference to prevent over-engineering and help b
 - ✔️ Level loading from ASCII maps
 - ✔️ Debug overlay for development
 - ✔️ Simple puzzle mechanics (blocks and targets)
+- ✔️ Advanced puzzle mechanics (switches, doors, keys, teleporters)
 - ✔️ Audio system with Tone.js
 - ✔️ Unit tests for all core modules
 - ✔️ E2E tests for basic functionality
 
 ## 🔮 Next Steps
 
-- Add more puzzle types (switches, doors, keys)
 - Create additional levels with increasing difficulty
 - Improve graphics with custom sprites
 - Add story elements and objectives
 - Implement a level editor
 - Add save/load functionality
+- Add more puzzle types (pressure plates, moving platforms)
