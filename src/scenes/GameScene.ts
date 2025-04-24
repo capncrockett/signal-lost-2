@@ -104,7 +104,8 @@ export default class GameScene extends Phaser.Scene {
       if (gameObject && entity.active === false) {
         // Handle different types of game objects
         if ('setVisible' in gameObject) {
-          ;(gameObject as Phaser.GameObjects.Image).setVisible(false)
+          const visibleObject = gameObject as Phaser.GameObjects.Image
+          visibleObject.setVisible(false)
         }
 
         // If it's a physics object, disable it
