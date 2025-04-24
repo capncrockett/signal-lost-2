@@ -15,6 +15,11 @@
     "alpha": "feature dev & unit tests",
     "beta": "QA, lint, docs, E2E tests"
   },
+  "workflow": {
+    "pr_creation": "agents can create full PRs with GitHub CLI",
+    "branching": "feature branches should follow feature/alpha/* or feature/beta/* pattern",
+    "ci_checks": "wait 30 seconds after making/updating PRs to check for CI status and comments, and continue checking until all checks are finished"
+  },
   "must": [
     "compile with no TS errors",
     "run all unit + E2E tests",

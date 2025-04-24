@@ -2,11 +2,9 @@ name: Cross-Agent Collaboration
 
 on:
   pull_request:
-    types: [ opened, reopened, synchronize, ready_for_review ]
+    types: [opened, reopened, synchronize, ready_for_review]
   pull_request_review:
-    types: [ submitted ]
-  issue_comment:
-    types: [ created ]
+    types: [submitted]
 
 permissions:
   contents: read
@@ -23,14 +21,8 @@ jobs:
       - name: Determine PR & Agent Type
         id: pr_info
         run: |
-          if [ "${{ github.event_name }}" = "issue_comment" ]; then
-            PR_NUM=$(echo "${{ github.event.issue.html_url }}" | grep -o '[0-9]\+$')
-            echo "pr_number=$PR_NUM" >> $GITHUB_OUTPUT
-            HEAD_REF=$(gh pr view $PR_NUM --json headRefName -q .headRefName)
-          else
-            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
-            HEAD_REF="${{ github.event.pull_request.head.ref }}"
-          fi
+          echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          HEAD_REF="${{ github.event.pull_request.head.ref }}"
 
           if [[ "$HEAD_REF" == feature/alpha/* ]]; then
             echo "agent=alpha" >> $GITHUB_OUTPUT
@@ -49,7 +41,7 @@ jobs:
           cat <<EOF > report.md
           # Cross-Agent Collaboration Report
 
-          **PR #**: ${{ steps.pr_info.outputs.pr_number }}  
+          **PR #**: ${{ steps.pr_info.outputs.pr_number }}
           **Agent**: ${{ steps.pr_info.outputs.agent }}
 
           EOF
@@ -58,21 +50,18 @@ jobs:
             echo "Waiting for review by the ${{ steps.pr_info.outputs.other_agent }} agent." >> report.md
           elif [ "${{ github.event_name }}" = "pull_request_review" ] && [ "${{ github.event.review.state }}" = "approved" ]; then
             echo "✅ Approved by the ${{ steps.pr_info.outputs.other_agent }} agent!" >> report.md
-          elif [ "${{ github.event_name }}" = "issue_comment" ]; then
-            echo "💬 Comment by the ${{ steps.pr_info.outputs.other_agent }} agent detected. Please address feedback." >> report.md
           fi
 
       - name: Post Collaboration Report
         uses: actions/github-script@v7
         if: |
           github.event_name == 'pull_request' ||
-          (github.event_name == 'pull_request_review' && github.event.review.state == 'approved') ||
-          github.event_name == 'issue_comment'
+          (github.event_name == 'pull_request_review' && github.event.review.state == 'approved')
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const report = require('fs').readFileSync('report.md','utf8');
-            const pr = parseInt(process.env.GITHUB_REF.split('/').pop() || '${{ steps.pr_info.outputs.pr_number }}');
+            const pr = parseInt('${{ steps.pr_info.outputs.pr_number }}');
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
