@@ -15,7 +15,7 @@ export interface PlayerConfig {
 }
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  private cursors: Phaser.Types.Input.Keyboard.CursorKeys
+  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys
   private gameState: GameState
   private audio?: AudioManager
   private puzzleEngine?: PuzzleEngine
@@ -39,12 +39,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setCollideWorldBounds(true)
 
     // Set up input
-    if (config.scene.input.keyboard) {
+    if (config.scene.input && config.scene.input.keyboard) {
       this.cursors = config.scene.input.keyboard.createCursorKeys()
       this.interactKey = config.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E)
     } else {
-      // Fallback if keyboard is not available
-      this.cursors = {} as Phaser.Types.Input.Keyboard.CursorKeys
+      // Create empty cursor keys if keyboard is not available
+      this.cursors = {
+        up: { isDown: false },
+        down: { isDown: false },
+        left: { isDown: false },
+        right: { isDown: false },
+        space: { isDown: false },
+        shift: { isDown: false },
+      } as Phaser.Types.Input.Keyboard.CursorKeys
       this.interactKey = {} as Phaser.Input.Keyboard.Key
     }
   }

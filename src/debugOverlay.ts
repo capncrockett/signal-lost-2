@@ -15,7 +15,7 @@ export class DebugOverlay {
     this.createTextObjects()
 
     // Toggle visibility with D key
-    if (this.scene.input.keyboard) {
+    if (this.scene.input && this.scene.input.keyboard) {
       this.scene.input.keyboard.on('keydown-D', () => {
         this.visible = !this.visible
         this.gameState.debug.showOverlay = this.visible
