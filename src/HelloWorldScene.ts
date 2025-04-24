@@ -22,8 +22,6 @@ export default class HelloWorldScene extends Phaser.Scene {
       blendMode: 'ADD',
     })
 
-    const emitter = particles
-
     const logo = this.physics.add.image(400, 100, 'logo')
 
     logo.setVelocity(100, 200)
@@ -31,8 +29,6 @@ export default class HelloWorldScene extends Phaser.Scene {
     logo.setCollideWorldBounds(true)
 
     // Set up particle emitter to follow the logo
-    if (particles.emitters && particles.emitters.list.length > 0) {
-      particles.emitters.list[0].startFollow(logo)
-    }
+    particles.startFollow(logo)
   }
 }

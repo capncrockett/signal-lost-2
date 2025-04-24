@@ -102,10 +102,13 @@ export default class GameScene extends Phaser.Scene {
     Object.entries(this.gameState.level.entities).forEach(([id, entity]) => {
       const gameObject = this.entities[id]
       if (gameObject && entity.active === false) {
-        gameObject.setVisible(false)
+        // Handle different types of game objects
+        if ('setVisible' in gameObject) {
+          ;(gameObject as Phaser.GameObjects.Image).setVisible(false)
+        }
 
         // If it's a physics object, disable it
-        if (gameObject instanceof Phaser.Physics.Arcade.Image) {
+        if (gameObject instanceof Phaser.Physics.Arcade.Image && gameObject.body) {
           gameObject.body.enable = false
         }
       }
