@@ -22,9 +22,7 @@ export class PuzzleEngine {
     const entities = this.gameState.level.entities
     return Object.values(entities).some(
       entity =>
-        entity.type === 'block' &&
-        Math.round(entity.x) === Math.round(x) &&
-        Math.round(entity.y) === Math.round(y)
+        entity.type === 'block' && Math.round(entity.x) === Math.round(x) && Math.round(entity.y) === Math.round(y)
     )
   }
 
@@ -35,9 +33,7 @@ export class PuzzleEngine {
     const entities = this.gameState.level.entities
     return Object.values(entities).some(
       entity =>
-        entity.type === 'target' &&
-        Math.round(entity.x) === Math.round(x) &&
-        Math.round(entity.y) === Math.round(y)
+        entity.type === 'target' && Math.round(entity.x) === Math.round(x) && Math.round(entity.y) === Math.round(y)
     )
   }
 
