@@ -1,0 +1,15 @@
+{
+    "cSpell.words": [
+        "chiptune",
+        "njsproj",
+        "ntvs",
+        "tilemaps",
+        "unmute"
+    ],
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit"
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true
+}

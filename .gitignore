@@ -13,8 +13,7 @@ dist-ssr
 *.local
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+# .vscode is now tracked for team settings sync
 .idea
 .DS_Store
 *.suo
