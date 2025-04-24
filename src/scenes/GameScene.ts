@@ -51,13 +51,15 @@ export default class GameScene extends Phaser.Scene {
     this.audio.playSequence(['C4', 'E4', 'G4'], ['8n', '8n', '8n'], '8n')
 
     // Set up keyboard events for audio control
-    if (this.input.keyboard) {
+    if (this.input && this.input.keyboard) {
       this.input.keyboard.on('keydown-M', () => {
         const muted = this.audio.toggleMute()
         console.log(`Audio ${muted ? 'muted' : 'unmuted'}`)
       })
+    }
 
-      // Set up keyboard events for player movement sounds
+    // Set up keyboard events for player movement sounds
+    if (this.input && this.input.keyboard) {
       this.input.keyboard.on('keydown-S', () => {
         if (this.player) {
           const enabled = this.player.toggleMoveSound()
