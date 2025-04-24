@@ -36,7 +36,23 @@ vi.mock('phaser', () => {
             setScrollFactor: vi.fn(),
             setDepth: vi.fn(),
             setText: vi.fn(),
+            setOrigin: vi.fn().mockReturnThis(),
+            setInteractive: vi.fn().mockReturnThis(),
+            on: vi.fn().mockReturnThis(),
+            setStyle: vi.fn().mockReturnThis(),
           }),
+          rectangle: vi.fn().mockReturnValue({
+            setOrigin: vi.fn().mockReturnThis(),
+            setAlpha: vi.fn().mockReturnThis(),
+          }),
+        }
+        cameras = {
+          main: {
+            width: 800,
+            height: 600,
+            centerX: 400,
+            centerY: 300,
+          },
         }
         physics = {
           add: {
