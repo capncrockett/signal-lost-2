@@ -23,5 +23,6 @@ export default class HelloWorldScene extends Phaser.Scene {
 
     // Note: Particle effects removed to avoid TypeScript errors in CI
     // This scene is not used in the actual game, so it's safe to simplify
+    // Added comment to trigger CI
   }
 }
