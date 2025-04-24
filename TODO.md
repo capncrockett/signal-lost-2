@@ -7,6 +7,7 @@
 - PR #9: Add menu system with main menu, level select, and settings screens
 - PR #6: Add new puzzle types: switches, doors, keys, and teleporters
 - PR #13: Fix TypeScript errors and simplify CI workflow
+- PR #16: Fix E2E tests to work with the new menu system
 
 ### ✅ Passing Checks
 
@@ -15,21 +16,21 @@
 - Linting: All linting checks pass
 - Formatting: All formatting checks pass
 
-### ⚠️ Known Issues
+### ✅ All Issues Resolved
 
-- E2E Tests: Some E2E tests are failing due to environment differences between local development and CI
-  - Canvas element not being found in the DOM
-  - GAME_STATE global variable not being properly set up
-  - Issues with accessing the level property in the GAME_STATE
+- E2E Tests: All E2E tests are now passing
+  - ✅ Fixed canvas element detection
+  - ✅ Ensured GAME_STATE global variable is properly set up
+  - ✅ Fixed issues with accessing the level property in the GAME_STATE
 
 ## Next Steps
 
 ### High Priority
 
-- [ ] Fix E2E tests to work with the new codebase structure
-  - Update tests to handle the menu system
-  - Ensure GAME_STATE is properly initialized before tests run
-  - Add proper waiting mechanisms for game initialization
+- [x] Fix E2E tests to work with the new codebase structure
+  - ✅ Updated tests to handle the menu system
+  - ✅ Ensured GAME_STATE is properly initialized before tests run
+  - ✅ Added proper waiting mechanisms for game initialization
 
 ### Medium Priority
 
