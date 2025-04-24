@@ -69,10 +69,8 @@ export default class GameScene extends Phaser.Scene {
         const muted = this.audio.toggleMute()
         console.log(`Audio ${muted ? 'muted' : 'unmuted'}`)
       })
-    }
 
-    // Set up keyboard events for player movement sounds
-    if (this.input && this.input.keyboard) {
+      // Set up keyboard events for player movement sounds
       this.input.keyboard.on('keydown-S', () => {
         if (this.player) {
           const enabled = this.player.toggleMoveSound()
