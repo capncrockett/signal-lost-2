@@ -1,6 +1,7 @@
 import Phaser from 'phaser'
 import { GameState } from './state'
 import { AudioManager } from './audio'
+import { PuzzleEngine } from './puzzleEngine'
 
 export interface PlayerConfig {
   scene: Phaser.Scene
@@ -10,21 +11,25 @@ export interface PlayerConfig {
   frame?: string | number
   gameState: GameState
   audio?: AudioManager
+  puzzleEngine?: PuzzleEngine
 }
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys
   private gameState: GameState
   private audio?: AudioManager
+  private puzzleEngine?: PuzzleEngine
   private speed = 100
   private lastMoveTime = 0
   private moveSound = false
+  private interactKey: Phaser.Input.Keyboard.Key
 
   constructor(config: PlayerConfig) {
     super(config.scene, config.x, config.y, config.texture, config.frame)
 
     this.gameState = config.gameState
     this.audio = config.audio
+    this.puzzleEngine = config.puzzleEngine
 
     // Add to scene
     config.scene.add.existing(this)
@@ -35,6 +40,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Set up input
     this.cursors = config.scene.input.keyboard.createCursorKeys()
+    this.interactKey = config.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E)
   }
 
   update(): void {
@@ -73,8 +79,47 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       }
     }
 
+    // Handle interaction with puzzle elements
+    if (Phaser.Input.Keyboard.JustDown(this.interactKey) && this.puzzleEngine) {
+      this.interact()
+    }
+
     // Update game state with player position
     this.gameState.updatePlayerPosition(this.x, this.y)
+  }
+
+  /**
+   * Interact with puzzle elements at the player's position
+   */
+  private interact(): void {
+    if (!this.puzzleEngine) return
+
+    const x = Math.round(this.x / 32)
+    const y = Math.round(this.y / 32)
+
+    // Check for keys to collect
+    if (this.puzzleEngine.isKeyAt(x, y)) {
+      this.puzzleEngine.collectKey(x, y)
+    }
+
+    // Check for locked doors to unlock
+    if (this.puzzleEngine.isLockedDoorAt(x, y)) {
+      this.puzzleEngine.tryUnlockDoor(x, y)
+    }
+
+    // Check for teleporters
+    if (this.puzzleEngine.isTeleporterAt(x, y)) {
+      const result = this.puzzleEngine.useTeleporter(x, y)
+      if (result.success && result.newX !== undefined && result.newY !== undefined) {
+        // Teleport the player
+        this.setPosition(result.newX * 32 + 16, result.newY * 32 + 16)
+      }
+    }
+
+    // Check for switches
+    if (this.puzzleEngine.isSwitchAt(x, y)) {
+      this.puzzleEngine.activateSwitch(x, y)
+    }
   }
 
   /**

@@ -4,6 +4,7 @@ import { DebugOverlay } from '../debugOverlay'
 import { GameState } from '../state'
 import { getLevel, LevelData } from '../levels'
 import { AudioManager } from '../audio'
+import { PuzzleEngine } from '../puzzleEngine'
 
 export default class GameScene extends Phaser.Scene {
   private player!: Player
@@ -12,6 +13,7 @@ export default class GameScene extends Phaser.Scene {
   private currentLevel!: LevelData
   private entities: Record<string, Phaser.GameObjects.GameObject> = {}
   private audio!: AudioManager
+  private puzzleEngine!: PuzzleEngine
 
   constructor() {
     super({ key: 'game' })
@@ -23,6 +25,12 @@ export default class GameScene extends Phaser.Scene {
 
     // Initialize audio
     this.audio = new AudioManager()
+
+    // Initialize puzzle engine
+    this.puzzleEngine = new PuzzleEngine({
+      gameState: this.gameState,
+      audio: this.audio,
+    })
 
     // Load the specified level or the default one
     const levelId = data.levelId || 'start'
@@ -38,6 +46,11 @@ export default class GameScene extends Phaser.Scene {
     this.load.image('floor', 'assets/sprites/checker.png')
     this.load.image('block', 'assets/sprites/crate32.png')
     this.load.image('target', 'assets/sprites/red_ball.png')
+    this.load.image('switch', 'assets/sprites/blue_ball.png')
+    this.load.image('door', 'assets/sprites/orb-blue.png')
+    this.load.image('key', 'assets/sprites/key.png')
+    this.load.image('locked_door', 'assets/sprites/orb-red.png')
+    this.load.image('teleporter', 'assets/sprites/flectrum.png')
   }
 
   create(): void {
@@ -75,6 +88,26 @@ export default class GameScene extends Phaser.Scene {
     if (this.debugOverlay) {
       this.debugOverlay.update()
     }
+
+    // Update entity visibility based on active state
+    this.updateEntityVisibility()
+  }
+
+  /**
+   * Update entity visibility based on active state in game state
+   */
+  private updateEntityVisibility(): void {
+    Object.entries(this.gameState.level.entities).forEach(([id, entity]) => {
+      const gameObject = this.entities[id]
+      if (gameObject && entity.active === false) {
+        gameObject.setVisible(false)
+
+        // If it's a physics object, disable it
+        if (gameObject instanceof Phaser.Physics.Arcade.Image) {
+          gameObject.body.enable = false
+        }
+      }
+    })
   }
 
   private createLevel(): void {
@@ -116,6 +149,7 @@ export default class GameScene extends Phaser.Scene {
           texture: 'player',
           gameState: this.gameState,
           audio: this.audio,
+          puzzleEngine: this.puzzleEngine,
         })
         this.entities[entity.id] = this.player
 
@@ -145,6 +179,65 @@ export default class GameScene extends Phaser.Scene {
         this.gameState.registerEntity(entity.id, {
           ...entity,
           gameObject: target,
+        })
+      } else if (entity.type === 'switch') {
+        // Create switch
+        const switchObj = this.add.image(posX, posY, 'switch')
+        this.entities[entity.id] = switchObj
+
+        // Register switch in game state
+        this.gameState.registerEntity(entity.id, {
+          ...entity,
+          gameObject: switchObj,
+          activated: false,
+        })
+      } else if (entity.type === 'door') {
+        // Create door
+        const door = this.physics.add.image(posX, posY, 'door')
+        door.setImmovable(true)
+        this.physics.add.collider(this.player, door)
+        this.entities[entity.id] = door
+
+        // Register door in game state
+        this.gameState.registerEntity(entity.id, {
+          ...entity,
+          gameObject: door,
+          active: true,
+        })
+      } else if (entity.type === 'key') {
+        // Create key
+        const key = this.add.image(posX, posY, 'key')
+        this.entities[entity.id] = key
+
+        // Register key in game state
+        this.gameState.registerEntity(entity.id, {
+          ...entity,
+          gameObject: key,
+          active: true,
+        })
+      } else if (entity.type === 'locked_door') {
+        // Create locked door
+        const lockedDoor = this.physics.add.image(posX, posY, 'locked_door')
+        lockedDoor.setImmovable(true)
+        this.physics.add.collider(this.player, lockedDoor)
+        this.entities[entity.id] = lockedDoor
+
+        // Register locked door in game state
+        this.gameState.registerEntity(entity.id, {
+          ...entity,
+          gameObject: lockedDoor,
+          active: true,
+        })
+      } else if (entity.type === 'teleporter') {
+        // Create teleporter
+        const teleporter = this.add.image(posX, posY, 'teleporter')
+        this.entities[entity.id] = teleporter
+
+        // Register teleporter in game state
+        this.gameState.registerEntity(entity.id, {
+          ...entity,
+          gameObject: teleporter,
+          active: true,
         })
       }
     })
