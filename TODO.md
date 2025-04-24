@@ -7,6 +7,7 @@
 - PR #9: Add menu system with main menu, level select, and settings screens
 - PR #6: Add new puzzle types: switches, doors, keys, and teleporters
 - PR #13: Fix TypeScript errors and simplify CI workflow
+- PR #15: Fix E2E tests to work with the new codebase structure
 
 ### ✅ Passing Checks
 
