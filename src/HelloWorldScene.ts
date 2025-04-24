@@ -19,6 +19,7 @@ export default class HelloWorldScene extends Phaser.Scene {
     // Create a particle manager
     const particles = this.add.particles('red')
 
+    // Create an emitter
     const emitter = particles.createEmitter({
       speed: 100,
       scale: { start: 1, end: 0 },
@@ -31,6 +32,7 @@ export default class HelloWorldScene extends Phaser.Scene {
     logo.setBounce(1, 1)
     logo.setCollideWorldBounds(true)
 
+    // Make particles follow the logo
     emitter.startFollow(logo)
   }
 }
