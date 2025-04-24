@@ -65,7 +65,6 @@ const navigateToGame = async (page: any): Promise<void> => {
   // Wait for game state to be initialized
   await waitForGameState(page)
 }
-
 test.describe('Puzzle Mechanics', () => {
   test('can load a puzzle level', async ({ page }) => {
     await page.goto('/')

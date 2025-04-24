@@ -65,7 +65,6 @@ const navigateToGame = async (page: any): Promise<void> => {
   // Wait for game state to be initialized
   await waitForGameState(page)
 }
-
 test.describe('Signal Lost Game', () => {
   test('game loads and canvas is visible', async ({ page }) => {
     await page.goto('/')
