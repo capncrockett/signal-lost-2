@@ -30,7 +30,7 @@
     "vitest": "^0.29.0"
   },
   "dependencies": {
-    "phaser": "^3.55.2",
+    "phaser": "^3.88.2",
     "tone": "^14.7.77"
   }
 }

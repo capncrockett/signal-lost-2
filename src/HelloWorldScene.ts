@@ -16,18 +16,21 @@ export default class HelloWorldScene extends Phaser.Scene {
   create() {
     this.add.image(400, 300, 'sky')
 
-    // Create a particle manager
+    // Create the logo
+    const logo = this.physics.add.image(400, 100, 'logo')
+    logo.setVelocity(100, 200)
+    logo.setBounce(1, 1)
+    logo.setCollideWorldBounds(true)
+
+    // Create a simple particle effect that follows the logo
     const particles = this.add.particles('red')
 
-    // Configure the emitter
-    particles.createEmitter({
+    const emitter = particles.createEmitter({
       speed: 100,
       scale: { start: 1, end: 0 },
-      blendMode: Phaser.BlendModes.ADD,
-      follow: this.physics.add.image(400, 100, 'logo')
-        .setVelocity(100, 200)
-        .setBounce(1, 1)
-        .setCollideWorldBounds(true)
+      blendMode: Phaser.BlendModes.ADD
     })
+
+    emitter.startFollow(logo)
   }
 }
