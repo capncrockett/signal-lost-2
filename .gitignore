@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Test results and reports
+test-results
+playwright-report
+
 # Editor directories and files
 # .vscode is now tracked for team settings sync
 .idea

@@ -171,14 +171,19 @@ This guide serves as a valuable reference to prevent over-engineering and help b
 - ✔️ Simple puzzle mechanics (blocks and targets)
 - ✔️ Advanced puzzle mechanics (switches, doors, keys, teleporters)
 - ✔️ Audio system with Tone.js
+- ✔️ Menu system with main menu, level select, and settings screens
 - ✔️ Unit tests for all core modules
 - ✔️ E2E tests for basic functionality
+- ✔️ TypeScript error fixes for better CI compatibility
 
 ## 🔮 Next Steps
 
+- Fix E2E tests to work with the new codebase structure
 - Create additional levels with increasing difficulty
 - Improve graphics with custom sprites
 - Add story elements and objectives
 - Implement a level editor
 - Add save/load functionality
 - Add more puzzle types (pressure plates, moving platforms)
+
+See [TODO.md](./TODO.md) for a detailed list of current issues and next steps.
