@@ -8,7 +8,6 @@ import { GameState } from '../state'
 export default class SettingsScene extends Phaser.Scene {
   private audio!: AudioManager
   private gameState!: GameState
-  private title!: Phaser.GameObjects.Text
   private audioButton!: Phaser.GameObjects.Text
   private moveSoundButton!: Phaser.GameObjects.Text
   private debugButton!: Phaser.GameObjects.Text
@@ -28,48 +27,39 @@ export default class SettingsScene extends Phaser.Scene {
 
   create(): void {
     // Create background
-    this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x000000)
-      .setOrigin(0, 0)
-      .setAlpha(0.8)
+    this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x000000).setOrigin(0, 0).setAlpha(0.8)
 
     // Create title
-    this.title = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height * 0.1,
-      'SETTINGS',
-      {
+    this.title = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.1, 'SETTINGS', {
         fontFamily: 'monospace',
         fontSize: '32px',
         color: '#ffffff',
         align: 'center',
         stroke: '#000000',
-        strokeThickness: 4
-      }
-    ).setOrigin(0.5)
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5)
 
     // Create settings buttons
     const buttonStyle = {
       fontFamily: 'monospace',
       fontSize: '20px',
       color: '#ffffff',
-      align: 'center'
+      align: 'center',
     }
 
     const buttonHoverStyle = {
       fontFamily: 'monospace',
       fontSize: '20px',
       color: '#ffff00',
-      align: 'center'
+      align: 'center',
     }
 
     // Audio toggle button
     const audioText = this.audio.isMuted() ? 'Audio: OFF' : 'Audio: ON'
-    this.audioButton = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height * 0.3,
-      audioText,
-      buttonStyle
-    )
+    this.audioButton = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.3, audioText, buttonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .on('pointerover', () => {
@@ -88,12 +78,8 @@ export default class SettingsScene extends Phaser.Scene {
 
     // Movement sound toggle button
     const moveSoundText = this.gameState.player.moveSound ? 'Movement Sounds: ON' : 'Movement Sounds: OFF'
-    this.moveSoundButton = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height * 0.4,
-      moveSoundText,
-      buttonStyle
-    )
+    this.moveSoundButton = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.4, moveSoundText, buttonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .on('pointerover', () => {
@@ -104,20 +90,14 @@ export default class SettingsScene extends Phaser.Scene {
       })
       .on('pointerdown', () => {
         this.gameState.player.moveSound = !this.gameState.player.moveSound
-        this.moveSoundButton.setText(
-          this.gameState.player.moveSound ? 'Movement Sounds: ON' : 'Movement Sounds: OFF'
-        )
+        this.moveSoundButton.setText(this.gameState.player.moveSound ? 'Movement Sounds: ON' : 'Movement Sounds: OFF')
         this.audio.playNote('D4', '8n')
       })
 
     // Debug overlay toggle button
     const debugText = this.gameState.debug.showOverlay ? 'Debug Overlay: ON' : 'Debug Overlay: OFF'
-    this.debugButton = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height * 0.5,
-      debugText,
-      buttonStyle
-    )
+    this.debugButton = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.5, debugText, buttonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .on('pointerover', () => {
@@ -128,19 +108,13 @@ export default class SettingsScene extends Phaser.Scene {
       })
       .on('pointerdown', () => {
         this.gameState.debug.showOverlay = !this.gameState.debug.showOverlay
-        this.debugButton.setText(
-          this.gameState.debug.showOverlay ? 'Debug Overlay: ON' : 'Debug Overlay: OFF'
-        )
+        this.debugButton.setText(this.gameState.debug.showOverlay ? 'Debug Overlay: ON' : 'Debug Overlay: OFF')
         this.audio.playNote('E4', '8n')
       })
 
     // Back button
-    this.backButton = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height * 0.7,
-      'Back to Menu',
-      buttonStyle
-    )
+    this.backButton = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.7, 'Back to Menu', buttonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .on('pointerover', () => {
@@ -167,17 +141,13 @@ export default class SettingsScene extends Phaser.Scene {
 
       this.input.keyboard.on('keydown-S', () => {
         this.gameState.player.moveSound = !this.gameState.player.moveSound
-        this.moveSoundButton.setText(
-          this.gameState.player.moveSound ? 'Movement Sounds: ON' : 'Movement Sounds: OFF'
-        )
+        this.moveSoundButton.setText(this.gameState.player.moveSound ? 'Movement Sounds: ON' : 'Movement Sounds: OFF')
         console.log(`Movement sounds ${this.gameState.player.moveSound ? 'enabled' : 'disabled'}`)
       })
 
       this.input.keyboard.on('keydown-D', () => {
         this.gameState.debug.showOverlay = !this.gameState.debug.showOverlay
-        this.debugButton.setText(
-          this.gameState.debug.showOverlay ? 'Debug Overlay: ON' : 'Debug Overlay: OFF'
-        )
+        this.debugButton.setText(this.gameState.debug.showOverlay ? 'Debug Overlay: ON' : 'Debug Overlay: OFF')
         console.log(`Debug overlay ${this.gameState.debug.showOverlay ? 'enabled' : 'disabled'}`)
       })
     }
@@ -208,7 +178,7 @@ export default class SettingsScene extends Phaser.Scene {
       fontFamily: 'monospace',
       fontSize: '20px',
       color: '#ffff00',
-      align: 'center'
+      align: 'center',
     })
 
     // Handle up key
@@ -218,7 +188,7 @@ export default class SettingsScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '20px',
         color: '#ffffff',
-        align: 'center'
+        align: 'center',
       })
 
       // Move selection up
@@ -229,7 +199,7 @@ export default class SettingsScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '20px',
         color: '#ffff00',
-        align: 'center'
+        align: 'center',
       })
 
       // Play sound
@@ -243,7 +213,7 @@ export default class SettingsScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '20px',
         color: '#ffffff',
-        align: 'center'
+        align: 'center',
       })
 
       // Move selection down
@@ -254,7 +224,7 @@ export default class SettingsScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '20px',
         color: '#ffff00',
-        align: 'center'
+        align: 'center',
       })
 
       // Play sound
@@ -274,15 +244,11 @@ export default class SettingsScene extends Phaser.Scene {
       } else if (selectedButton === 1) {
         // Toggle movement sounds
         this.gameState.player.moveSound = !this.gameState.player.moveSound
-        this.moveSoundButton.setText(
-          this.gameState.player.moveSound ? 'Movement Sounds: ON' : 'Movement Sounds: OFF'
-        )
+        this.moveSoundButton.setText(this.gameState.player.moveSound ? 'Movement Sounds: ON' : 'Movement Sounds: OFF')
       } else if (selectedButton === 2) {
         // Toggle debug overlay
         this.gameState.debug.showOverlay = !this.gameState.debug.showOverlay
-        this.debugButton.setText(
-          this.gameState.debug.showOverlay ? 'Debug Overlay: ON' : 'Debug Overlay: OFF'
-        )
+        this.debugButton.setText(this.gameState.debug.showOverlay ? 'Debug Overlay: ON' : 'Debug Overlay: OFF')
       } else if (selectedButton === 3) {
         // Back to menu
         this.scene.start('menu')

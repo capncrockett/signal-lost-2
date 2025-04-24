@@ -7,7 +7,6 @@ import { LEVELS } from '../levels'
  */
 export default class LevelSelectScene extends Phaser.Scene {
   private audio!: AudioManager
-  private title!: Phaser.GameObjects.Text
   private levelButtons: Phaser.GameObjects.Text[] = []
   private backButton!: Phaser.GameObjects.Text
 
@@ -22,38 +21,33 @@ export default class LevelSelectScene extends Phaser.Scene {
 
   create(): void {
     // Create background
-    this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x000000)
-      .setOrigin(0, 0)
-      .setAlpha(0.8)
+    this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x000000).setOrigin(0, 0).setAlpha(0.8)
 
     // Create title
-    this.title = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height * 0.1,
-      'SELECT LEVEL',
-      {
+    this.title = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.1, 'SELECT LEVEL', {
         fontFamily: 'monospace',
         fontSize: '32px',
         color: '#ffffff',
         align: 'center',
         stroke: '#000000',
-        strokeThickness: 4
-      }
-    ).setOrigin(0.5)
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5)
 
     // Create level buttons
     const buttonStyle = {
       fontFamily: 'monospace',
       fontSize: '20px',
       color: '#ffffff',
-      align: 'center'
+      align: 'center',
     }
 
     const buttonHoverStyle = {
       fontFamily: 'monospace',
       fontSize: '20px',
       color: '#ffff00',
-      align: 'center'
+      align: 'center',
     }
 
     // Get all level IDs
@@ -62,12 +56,8 @@ export default class LevelSelectScene extends Phaser.Scene {
     // Create a button for each level
     levelIds.forEach((levelId, index) => {
       const level = LEVELS[levelId]
-      const button = this.add.text(
-        this.cameras.main.centerX,
-        this.cameras.main.height * 0.2 + (index + 1) * 40,
-        level.name,
-        buttonStyle
-      )
+      const button = this.add
+        .text(this.cameras.main.centerX, this.cameras.main.height * 0.2 + (index + 1) * 40, level.name, buttonStyle)
         .setOrigin(0.5)
         .setInteractive({ useHandCursor: true })
         .on('pointerover', () => {
@@ -85,12 +75,8 @@ export default class LevelSelectScene extends Phaser.Scene {
     })
 
     // Create back button
-    this.backButton = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height * 0.8,
-      'Back to Menu',
-      buttonStyle
-    )
+    this.backButton = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.8, 'Back to Menu', buttonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .on('pointerover', () => {
@@ -142,7 +128,7 @@ export default class LevelSelectScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '20px',
         color: '#ffff00',
-        align: 'center'
+        align: 'center',
       })
     }
 
@@ -155,7 +141,7 @@ export default class LevelSelectScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '20px',
         color: '#ffffff',
-        align: 'center'
+        align: 'center',
       })
 
       // Move selection up
@@ -166,7 +152,7 @@ export default class LevelSelectScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '20px',
         color: '#ffff00',
-        align: 'center'
+        align: 'center',
       })
 
       // Play sound
@@ -182,7 +168,7 @@ export default class LevelSelectScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '20px',
         color: '#ffffff',
-        align: 'center'
+        align: 'center',
       })
 
       // Move selection down
@@ -193,7 +179,7 @@ export default class LevelSelectScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '20px',
         color: '#ffff00',
-        align: 'center'
+        align: 'center',
       })
 
       // Play sound

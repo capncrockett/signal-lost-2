@@ -6,7 +6,6 @@ import { AudioManager } from '../audio'
  */
 export default class MenuScene extends Phaser.Scene {
   private audio!: AudioManager
-  private title!: Phaser.GameObjects.Text
   private startButton!: Phaser.GameObjects.Text
   private levelSelectButton!: Phaser.GameObjects.Text
   private settingsButton!: Phaser.GameObjects.Text
@@ -22,47 +21,38 @@ export default class MenuScene extends Phaser.Scene {
 
   create(): void {
     // Create background
-    this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x000000)
-      .setOrigin(0, 0)
-      .setAlpha(0.8)
+    this.add.rectangle(0, 0, this.cameras.main.width, this.cameras.main.height, 0x000000).setOrigin(0, 0).setAlpha(0.8)
 
     // Create title
-    this.title = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height * 0.2,
-      'SIGNAL LOST',
-      {
+    this.title = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.2, 'SIGNAL LOST', {
         fontFamily: 'monospace',
         fontSize: '48px',
         color: '#ffffff',
         align: 'center',
         stroke: '#000000',
-        strokeThickness: 4
-      }
-    ).setOrigin(0.5)
+        strokeThickness: 4,
+      })
+      .setOrigin(0.5)
 
     // Create buttons
     const buttonStyle = {
       fontFamily: 'monospace',
       fontSize: '24px',
       color: '#ffffff',
-      align: 'center'
+      align: 'center',
     }
 
     const buttonHoverStyle = {
       fontFamily: 'monospace',
       fontSize: '24px',
       color: '#ffff00',
-      align: 'center'
+      align: 'center',
     }
 
     // Start Game button
-    this.startButton = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height * 0.4,
-      'Start Game',
-      buttonStyle
-    )
+    this.startButton = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.4, 'Start Game', buttonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .on('pointerover', () => {
@@ -77,12 +67,8 @@ export default class MenuScene extends Phaser.Scene {
       })
 
     // Level Select button
-    this.levelSelectButton = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height * 0.5,
-      'Level Select',
-      buttonStyle
-    )
+    this.levelSelectButton = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.5, 'Level Select', buttonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .on('pointerover', () => {
@@ -97,12 +83,8 @@ export default class MenuScene extends Phaser.Scene {
       })
 
     // Settings button
-    this.settingsButton = this.add.text(
-      this.cameras.main.centerX,
-      this.cameras.main.height * 0.6,
-      'Settings',
-      buttonStyle
-    )
+    this.settingsButton = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.6, 'Settings', buttonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .on('pointerover', () => {
@@ -117,16 +99,13 @@ export default class MenuScene extends Phaser.Scene {
       })
 
     // Version info
-    this.add.text(
-      this.cameras.main.width - 10,
-      this.cameras.main.height - 10,
-      'v0.1.0',
-      {
+    this.add
+      .text(this.cameras.main.width - 10, this.cameras.main.height - 10, 'v0.1.0', {
         fontFamily: 'monospace',
         fontSize: '12px',
-        color: '#888888'
-      }
-    ).setOrigin(1, 1)
+        color: '#888888',
+      })
+      .setOrigin(1, 1)
 
     // Play intro music
     this.audio.playSequence(['C4', 'E4', 'G4', 'C5'], ['8n', '8n', '8n', '4n'], '8n')
@@ -164,7 +143,7 @@ export default class MenuScene extends Phaser.Scene {
       fontFamily: 'monospace',
       fontSize: '24px',
       color: '#ffff00',
-      align: 'center'
+      align: 'center',
     })
 
     // Handle up key
@@ -174,7 +153,7 @@ export default class MenuScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '24px',
         color: '#ffffff',
-        align: 'center'
+        align: 'center',
       })
 
       // Move selection up
@@ -185,7 +164,7 @@ export default class MenuScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '24px',
         color: '#ffff00',
-        align: 'center'
+        align: 'center',
       })
 
       // Play sound
@@ -199,7 +178,7 @@ export default class MenuScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '24px',
         color: '#ffffff',
-        align: 'center'
+        align: 'center',
       })
 
       // Move selection down
@@ -210,7 +189,7 @@ export default class MenuScene extends Phaser.Scene {
         fontFamily: 'monospace',
         fontSize: '24px',
         color: '#ffff00',
-        align: 'center'
+        align: 'center',
       })
 
       // Play sound
