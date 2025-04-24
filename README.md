@@ -160,6 +160,16 @@ The [game-development-reference-guide.md](./game-development-reference-guide.md)
 - Scene and state management patterns
 - TypeScript integration benefits
 
+### Menu System Documentation
+
+The [menu-system.md](./docs/menu-system.md) provides detailed documentation on the game's menu system, including:
+
+- Menu scene structure and navigation flow
+- UI components and keyboard navigation
+- Audio feedback implementation
+- Best practices for menu design
+- Troubleshooting common issues
+
 This guide serves as a valuable reference to prevent over-engineering and help break out of development loops by providing practical, tested approaches to common game development challenges.
 
 ## ✅ Current Progress

@@ -3,17 +3,20 @@
 ## Current State (After PR Merges)
 
 ### ✅ Successfully Merged PRs
+
 - PR #9: Add menu system with main menu, level select, and settings screens
 - PR #6: Add new puzzle types: switches, doors, keys, and teleporters
 - PR #13: Fix TypeScript errors and simplify CI workflow
 
 ### ✅ Passing Checks
+
 - Unit Tests: All unit tests are passing
 - TypeScript Build: No TypeScript errors
 - Linting: All linting checks pass
 - Formatting: All formatting checks pass
 
 ### ⚠️ Known Issues
+
 - E2E Tests: Some E2E tests are failing due to environment differences between local development and CI
   - Canvas element not being found in the DOM
   - GAME_STATE global variable not being properly set up
@@ -22,17 +25,28 @@
 ## Next Steps
 
 ### High Priority
+
 - [ ] Fix E2E tests to work with the new codebase structure
   - Update tests to handle the menu system
   - Ensure GAME_STATE is properly initialized before tests run
   - Add proper waiting mechanisms for game initialization
 
 ### Medium Priority
-- [ ] Improve test coverage for new puzzle types
-- [ ] Add documentation for the menu system
+
+- [x] Improve test coverage for new puzzle types
+  - ✅ Added E2E tests for blocks and targets
+  - ✅ Added E2E tests for switches and doors
+  - ✅ Added E2E tests for keys and locked doors
+  - ✅ Added E2E tests for teleporters
+- [x] Add documentation for the menu system
+  - ✅ Created comprehensive menu system documentation
+  - ✅ Added documentation for scene structure and navigation
+  - ✅ Added documentation for UI components and keyboard navigation
+  - ✅ Added documentation for extending the menu system
 - [ ] Create additional levels showcasing the new puzzle types
 
 ### Low Priority
+
 - [ ] Optimize asset loading for faster startup
 - [ ] Improve error handling and debugging tools
 - [ ] Add more visual feedback for puzzle interactions
