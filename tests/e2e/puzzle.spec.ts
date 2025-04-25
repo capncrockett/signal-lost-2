@@ -44,9 +44,11 @@ const navigateToGame = async (page: any): Promise<void> => {
     console.log('Start Game button not found, checking if already in game scene')
 
     // Check if we're already in the game scene
-    const isInGameScene = await page.evaluate(() => {
-      return window.GAME_STATE && window.GAME_STATE.level && window.GAME_STATE.level.id !== undefined
-    }).catch(() => false)
+    const isInGameScene = await page
+      .evaluate(() => {
+        return window.GAME_STATE && window.GAME_STATE.level && window.GAME_STATE.level.id !== undefined
+      })
+      .catch(() => false)
 
     if (!isInGameScene) {
       // If we're not in the game scene, try to find the button with a different selector
@@ -151,7 +153,7 @@ test.describe('Puzzle Mechanics', () => {
           success: true,
           levelId: window.GAME_STATE.level.id,
           solved: window.GAME_STATE.level.solved,
-          puzzlesSolved: window.GAME_STATE.progress.puzzlesSolved
+          puzzlesSolved: window.GAME_STATE.progress.puzzlesSolved,
         }
       } catch (error) {
         console.error('Error setting game state:', error)
