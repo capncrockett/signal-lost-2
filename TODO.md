@@ -12,6 +12,7 @@
 - PR #18: Add E2E tests for puzzle types
 
 ### ✅ Passing Checks
+
 - Unit Tests: All unit tests are passing
 - TypeScript Build: No TypeScript errors
 - Linting: All linting checks pass
@@ -48,6 +49,7 @@
 - [ ] Create additional levels showcasing the new puzzle types
 
 ### Low Priority
+
 - [ ] Optimize asset loading for faster startup
 - [ ] Improve error handling and debugging tools
 - [ ] Add more visual feedback for puzzle interactions
