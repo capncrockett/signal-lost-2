@@ -246,7 +246,7 @@ export class PuzzleEngine {
           duration: 300,
           onComplete: () => {
             sprite.setVisible(false)
-          }
+          },
         })
       }
     }
@@ -298,7 +298,7 @@ export class PuzzleEngine {
           duration: 500,
           onComplete: () => {
             sprite.setVisible(false)
-          }
+          },
         })
       }
     }

@@ -64,7 +64,9 @@ export class AudioManager {
   /**
    * Play a predefined sound effect
    */
-  playSoundEffect(effect: 'pickup' | 'success' | 'error' | 'move' | 'interact' | 'teleport' | 'unlock' | 'levelComplete'): void {
+  playSoundEffect(
+    effect: 'pickup' | 'success' | 'error' | 'move' | 'interact' | 'teleport' | 'unlock' | 'levelComplete'
+  ): void {
     if (this.muted) return
 
     switch (effect) {
