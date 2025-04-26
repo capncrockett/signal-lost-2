@@ -122,6 +122,90 @@ export default class GameScene extends Phaser.Scene {
 
     // Update entity visibility based on active state
     this.updateEntityVisibility()
+
+    // Check for level completion
+    if (this.gameState.level.solved) {
+      this.handleLevelCompletion()
+    }
+  }
+
+  /**
+   * Handle level completion
+   */
+  private handleLevelCompletion(): void {
+    // Prevent multiple calls
+    this.gameState.level.solved = false
+
+    // Play completion sound
+    this.audio.playSequence(['C4', 'E4', 'G4', 'C5'], ['8n', '8n', '8n', '4n'], '8n')
+
+    // Show level completion message
+    const completionText = this.add
+      .text(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY - 50,
+        'Level Complete!',
+        {
+          fontFamily: 'monospace',
+          fontSize: '32px',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: { x: 20, y: 10 },
+        }
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(100)
+
+    // Add continue button
+    const continueButton = this.add
+      .text(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY + 50,
+        'Continue',
+        {
+          fontFamily: 'monospace',
+          fontSize: '24px',
+          color: '#ffffff',
+          backgroundColor: '#333333',
+          padding: { x: 20, y: 10 },
+        }
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0)
+      .setDepth(100)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerover', () => {
+        continueButton.setStyle({ color: '#ffff00' })
+      })
+      .on('pointerout', () => {
+        continueButton.setStyle({ color: '#ffffff' })
+      })
+      .on('pointerdown', () => {
+        // Determine next level
+        const currentLevelId = this.currentLevel.id
+        let nextLevelId = currentLevelId
+
+        // Simple level progression logic
+        if (currentLevelId === 'start') {
+          nextLevelId = 'puzzle1'
+        } else if (currentLevelId === 'puzzle1') {
+          nextLevelId = 'puzzle2'
+        } else if (currentLevelId === 'puzzle2') {
+          nextLevelId = 'puzzle3'
+        } else if (currentLevelId === 'puzzle3') {
+          nextLevelId = 'puzzle4'
+        } else if (currentLevelId === 'puzzle4') {
+          nextLevelId = 'puzzle5'
+        } else {
+          // If no more levels, go to level select
+          this.scene.start('levelSelect')
+          return
+        }
+
+        // Start next level
+        this.scene.start('game', { levelId: nextLevelId })
+      })
   }
 
   /**
