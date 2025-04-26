@@ -12,8 +12,18 @@
 
 ### High Priority
 
-- [ ] Review and update documentation for new puzzle types
-- [ ] Ensure E2E test coverage for all new features
+- [x] Review and update documentation for new puzzle types
+  - ✅ Created comprehensive puzzle types documentation
+  - ✅ Added documentation for blocks and targets
+  - ✅ Added documentation for switches and doors
+  - ✅ Added documentation for keys and locked doors
+  - ✅ Added documentation for teleporters
+  - ✅ Added Puzzle Engine API reference
+- [x] Ensure E2E test coverage for all new features
+  - ✅ Created new E2E tests for menu system navigation
+  - ✅ Added tests for main menu, level select, and settings screens
+  - ✅ Added tests for keyboard navigation in menus
+  - ✅ Identified and documented issues for Agent Alpha to fix
 
 ### Medium Priority
 
