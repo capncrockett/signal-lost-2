@@ -1,11 +1,6 @@
 import Phaser from 'phaser'
 import { AudioManager } from '../audio'
-import {
-  buttonStyle,
-  buttonHoverStyle,
-  buttonFocusStyle,
-  titleStyle
-} from '../utils/menuStyles'
+import { buttonStyle, buttonHoverStyle, buttonFocusStyle, titleStyle } from '../utils/menuStyles'
 
 /**
  * Main menu scene for the game
@@ -39,7 +34,8 @@ export default class MenuScene extends Phaser.Scene {
       .setData('test-id', 'title')
 
     // Create focus indicator (initially hidden)
-    this.focusIndicator = this.add.rectangle(0, 0, 200, 40, 0x333333)
+    this.focusIndicator = this.add
+      .rectangle(0, 0, 200, 40, 0x333333)
       .setOrigin(0.5)
       .setAlpha(0)
       .setData('test-id', 'focus-indicator')
@@ -216,41 +212,41 @@ export default class MenuScene extends Phaser.Scene {
     this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
       // Check if pointer is over any button
       for (let i = 0; i < this.buttons.length; i++) {
-        const button = this.buttons[i];
+        const button = this.buttons[i]
         if (button.getBounds().contains(pointer.x, pointer.y)) {
           // Reset previous button style
-          this.buttons[this.selectedButton].setStyle(buttonStyle);
+          this.buttons[this.selectedButton].setStyle(buttonStyle)
 
           // Update selected button
-          this.selectedButton = i;
+          this.selectedButton = i
 
           // Update focus indicator
-          this.updateFocusIndicator();
+          this.updateFocusIndicator()
 
-          break;
+          break
         }
       }
-    });
+    })
   }
 
   /**
    * Update the focus indicator position and visibility
    */
   private updateFocusIndicator(): void {
-    if (this.buttons.length === 0) return;
+    if (this.buttons.length === 0) return
 
     // Get the currently selected button
-    const button = this.buttons[this.selectedButton];
+    const button = this.buttons[this.selectedButton]
 
     // Update focus indicator position and size
-    this.focusIndicator.setPosition(button.x, button.y);
-    this.focusIndicator.setSize(button.width + 20, button.height + 10);
+    this.focusIndicator.setPosition(button.x, button.y)
+    this.focusIndicator.setSize(button.width + 20, button.height + 10)
 
     // Make sure it's visible and behind the text
-    this.focusIndicator.setAlpha(1);
-    this.focusIndicator.setDepth(button.depth - 1);
+    this.focusIndicator.setAlpha(1)
+    this.focusIndicator.setDepth(button.depth - 1)
 
     // Apply focus style to the button
-    button.setStyle(buttonFocusStyle);
+    button.setStyle(buttonFocusStyle)
   }
 }
