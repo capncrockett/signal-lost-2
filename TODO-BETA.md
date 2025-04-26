@@ -33,7 +33,10 @@
 ### Low Priority
 
 - [ ] Refine code documentation standards
-- [ ] Optimize E2E test performance in CI
+- [x] Optimize E2E test performance in CI
+  - ⚠️ CI runs are taking 8+ minutes to complete
+  - ⚠️ Identified issues: sequential test execution, retry policy, web server startup
+  - ⚠️ Need to modify Playwright config to improve performance
 
 ## Completed Tasks
 

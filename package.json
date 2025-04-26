@@ -13,6 +13,7 @@
     "test:unit:watch": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:agent": "playwright test --config=playwright.agent.config.ts",
+    "test:e2e:ci": "playwright test --config=playwright.ci-optimized.config.ts",
     "test:e2e:report": "node scripts/parse-test-results.js",
     "lint": "eslint src --ext ts",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
