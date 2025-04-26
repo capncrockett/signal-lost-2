@@ -64,7 +64,9 @@ export class AudioManager {
   /**
    * Play a predefined sound effect
    */
-  playSoundEffect(effect: 'pickup' | 'success' | 'error' | 'move'): void {
+  playSoundEffect(
+    effect: 'pickup' | 'success' | 'error' | 'move' | 'interact' | 'teleport' | 'unlock' | 'levelComplete'
+  ): void {
     if (this.muted) return
 
     switch (effect) {
@@ -89,6 +91,31 @@ export class AudioManager {
 
       case 'move':
         this.playNote('C4', '32n')
+        break
+
+      case 'interact':
+        this.playNote('E4', '16n')
+        this.playNote('G4', '16n', Tone.now() + 0.1)
+        break
+
+      case 'teleport':
+        this.synth.connect(this.effects.delay)
+        this.playNote('G5', '16n')
+        this.playNote('C6', '16n', Tone.now() + 0.1)
+        this.playNote('G5', '16n', Tone.now() + 0.2)
+        setTimeout(() => this.synth.disconnect(this.effects.delay), 500)
+        break
+
+      case 'unlock':
+        this.playNote('A4', '16n')
+        this.playNote('C5', '16n', Tone.now() + 0.1)
+        this.playNote('E5', '16n', Tone.now() + 0.2)
+        break
+
+      case 'levelComplete':
+        this.synth.connect(this.effects.reverb)
+        this.playSequence(['C4', 'E4', 'G4', 'C5', 'E5', 'G5'], ['8n', '8n', '8n', '8n', '8n', '4n'], '8n')
+        setTimeout(() => this.synth.disconnect(this.effects.reverb), 2000)
         break
     }
   }
