@@ -214,8 +214,6 @@ export default class MenuScene extends Phaser.Scene {
 
     // Handle mouse movement to update focus
     this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
-      const previousButton = this.selectedButton;
-
       // Check if pointer is over any button
       for (let i = 0; i < this.buttons.length; i++) {
         const button = this.buttons[i];
