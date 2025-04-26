@@ -76,7 +76,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setVelocity(0)
 
     // Store current direction
-    let currentDirection = { x: 0, y: 0 }
+    const currentDirection = { x: 0, y: 0 }
 
     // Horizontal movement
     if (this.cursors.left?.isDown) {
