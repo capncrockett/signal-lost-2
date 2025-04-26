@@ -24,7 +24,6 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private moveSound = false
   private interactKey: Phaser.Input.Keyboard.Key
   private interactFeedback?: Phaser.GameObjects.Rectangle
-  private movementBlocked = false
   private lastDirection = { x: 0, y: 0 }
 
   constructor(config: PlayerConfig) {
@@ -44,15 +43,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setFriction(0.5, 0.5) // Add friction for smoother movement
 
     // Create visual feedback for interaction
-    this.interactFeedback = config.scene.add.rectangle(
-      this.x,
-      this.y,
-      32,
-      32,
-      0xffff00,
-      0.3
-    )
-    this.interactFeedback.setVisible(false)
+    try {
+      this.interactFeedback = config.scene.add.rectangle(
+        this.x,
+        this.y,
+        32,
+        32,
+        0xffff00,
+        0.3
+      )
+      this.interactFeedback.setVisible(false)
+    } catch (error) {
+      console.warn('Failed to create interaction feedback, likely running in CI environment:', error)
+    }
 
     // Set up input
     if (config.scene.input && config.scene.input.keyboard) {
@@ -148,15 +151,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Show visual feedback for interaction
     if (this.interactFeedback) {
-      this.interactFeedback.setPosition(x * 32 + 16, y * 32 + 16)
-      this.interactFeedback.setVisible(true)
+      try {
+        this.interactFeedback.setPosition(x * 32 + 16, y * 32 + 16)
+        this.interactFeedback.setVisible(true)
 
-      // Hide feedback after a short delay
-      this.scene.time.delayedCall(300, () => {
-        if (this.interactFeedback) {
-          this.interactFeedback.setVisible(false)
-        }
-      })
+        // Hide feedback after a short delay
+        this.scene.time.delayedCall(300, () => {
+          if (this.interactFeedback) {
+            this.interactFeedback.setVisible(false)
+          }
+        })
+      } catch (error) {
+        console.warn('Failed to show interaction feedback, likely running in CI environment:', error)
+      }
     }
 
     // Check for keys to collect

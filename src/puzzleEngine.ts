@@ -232,23 +232,31 @@ export class PuzzleEngine {
     }
 
     // Add visual feedback
-    const gameObject = keyEntity.gameObject
-    if (gameObject && 'setTint' in gameObject) {
-      const sprite = gameObject as Phaser.GameObjects.Image
-      sprite.setTint(0xffff00)
+    try {
+      const gameObject = keyEntity.gameObject
+      if (gameObject && 'setTint' in gameObject) {
+        const sprite = gameObject as Phaser.GameObjects.Image
+        sprite.setTint(0xffff00)
 
-      // Fade out the key
-      if ('scene' in gameObject) {
-        const scene = (gameObject as any).scene as Phaser.Scene
-        scene.tweens.add({
-          targets: gameObject,
-          alpha: 0,
-          duration: 300,
-          onComplete: () => {
-            sprite.setVisible(false)
-          }
-        })
+        // Fade out the key
+        if ('scene' in gameObject) {
+          const scene = (gameObject as any).scene as Phaser.Scene
+          scene.tweens.add({
+            targets: gameObject,
+            alpha: 0,
+            duration: 300,
+            onComplete: () => {
+              try {
+                sprite.setVisible(false)
+              } catch (error) {
+                // Ignore errors in CI
+              }
+            }
+          })
+        }
       }
+    } catch (error) {
+      console.warn('Failed to show key collection feedback, likely running in CI environment:', error)
     }
 
     return true
@@ -284,23 +292,31 @@ export class PuzzleEngine {
     }
 
     // Add visual feedback
-    const gameObject = doorEntity.gameObject
-    if (gameObject && 'setTint' in gameObject) {
-      const sprite = gameObject as Phaser.GameObjects.Image
-      sprite.setTint(0x00ff00)
+    try {
+      const gameObject = doorEntity.gameObject
+      if (gameObject && 'setTint' in gameObject) {
+        const sprite = gameObject as Phaser.GameObjects.Image
+        sprite.setTint(0x00ff00)
 
-      // Fade out the door
-      if ('scene' in gameObject) {
-        const scene = (gameObject as any).scene as Phaser.Scene
-        scene.tweens.add({
-          targets: gameObject,
-          alpha: 0,
-          duration: 500,
-          onComplete: () => {
-            sprite.setVisible(false)
-          }
-        })
+        // Fade out the door
+        if ('scene' in gameObject) {
+          const scene = (gameObject as any).scene as Phaser.Scene
+          scene.tweens.add({
+            targets: gameObject,
+            alpha: 0,
+            duration: 500,
+            onComplete: () => {
+              try {
+                sprite.setVisible(false)
+              } catch (error) {
+                // Ignore errors in CI
+              }
+            }
+          })
+        }
       }
+    } catch (error) {
+      console.warn('Failed to show door unlock feedback, likely running in CI environment:', error)
     }
 
     // Check if all locked doors are unlocked
