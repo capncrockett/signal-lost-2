@@ -61,7 +61,7 @@ This document outlines the development roadmap for Signal Lost, replacing the pr
 ### Core Gameplay
 
 - Create additional levels showcasing the new puzzle types
-- Fix menu system keyboard navigation issues
+- ✅ Fix menu system keyboard navigation issues
 - Implement save game functionality
 - Add sound effects for puzzle interactions
 
