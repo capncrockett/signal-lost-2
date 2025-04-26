@@ -21,7 +21,9 @@
     "ci_checks": "wait 30 seconds after making/updating PRs to check for CI status and comments, and continue checking until all checks are finished",
     "pr_review": "when working with another agent to review, approve, and merge PRs, sleep the terminal for 30 seconds between checks to see any comments or reviews from the other agent",
     "release_process": "never push directly to main; only release to main when develop is fully tested and ready for release",
-    "branch_protection": "never push directly to develop branch; always use feature branches and PRs for all changes"
+    "branch_protection": "never push directly to develop branch; always use feature branches and PRs for all changes",
+    "merge_order": "merge PRs in the correct order to avoid conflicts (e.g., PRs that create files before PRs that modify them)",
+    "conflict_resolution": "when conflicts occur: stash changes, pull latest from develop, resolve conflicts, apply stashed changes, then push"
   },
   "must": [
     "compile with no TS errors",
