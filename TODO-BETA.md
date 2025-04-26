@@ -30,6 +30,10 @@
   - ✅ Added direct scene navigation to bypass UI interaction issues
   - ✅ Added better error handling and logging for test failures
   - ✅ Updated TODO-ALPHA.md with issues that need to be fixed
+- [ ] Monitor and maintain GitHub Pages deployment
+  - [ ] Test the deployment workflow
+  - [ ] Ensure the game works correctly on GitHub Pages
+  - [ ] Update documentation if deployment issues are found
 
 ### Low Priority
 

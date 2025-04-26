@@ -1,0 +1,90 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Manual trigger
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (e.g., v1.0.0)'
+        required: true
+        default: ''
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: develop
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Create release branch
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git checkout -b release/${{ github.event.inputs.version }}
+
+      - name: Update Vite config for GitHub Pages
+        run: |
+          # Use sed to add base config to vite.config.ts
+          sed -i '/defineConfig({/a\  base: "\/signal-lost-2\/",\' vite.config.ts
+          git add vite.config.ts
+          git commit -m "chore: configure GitHub Pages base path"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: |
+          npm run test:unit
+          npm run test:e2e:ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare docs directory
+        run: |
+          rm -rf docs
+          mkdir docs
+          cp -r dist/* docs/
+          git add docs
+          git commit -m "chore: build for GitHub Pages"
+
+      - name: Push release branch
+        run: git push origin release/${{ github.event.inputs.version }}
+
+      - name: Create Pull Request to main
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          head: release/${{ github.event.inputs.version }}
+          title: "Release ${{ github.event.inputs.version }}"
+          body: |
+            This PR deploys version ${{ github.event.inputs.version }} to GitHub Pages.
+            
+            Changes included in this release:
+            - [List major changes here]
+          
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: docs
+          branch: gh-pages
+          
+      - name: Create Pull Request to develop
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: develop
+          head: release/${{ github.event.inputs.version }}
+          title: "Sync develop with release ${{ github.event.inputs.version }}"
+          body: |
+            This PR syncs the develop branch with the changes made during the release process.
