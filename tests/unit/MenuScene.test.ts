@@ -7,17 +7,23 @@ vi.mock('phaser', () => {
     default: {
       Scene: class {
         scene = { key: 'menu' }
-        constructor() {}
+        constructor() { }
         add: any = {
-          rectangle: vi.fn().mockReturnValue({
-            setOrigin: vi.fn().mockReturnThis(),
-            setAlpha: vi.fn().mockReturnThis(),
-          }),
+
           text: vi.fn().mockReturnValue({
             setOrigin: vi.fn().mockReturnThis(),
             setInteractive: vi.fn().mockReturnThis(),
             on: vi.fn().mockReturnThis(),
             setStyle: vi.fn().mockReturnThis(),
+            setData: vi.fn().mockReturnThis(),
+          }),
+          rectangle: vi.fn().mockReturnValue({
+            setOrigin: vi.fn().mockReturnThis(),
+            setAlpha: vi.fn().mockReturnThis(),
+            setDepth: vi.fn().mockReturnThis(),
+            setSize: vi.fn().mockReturnThis(),
+            setPosition: vi.fn().mockReturnThis(),
+            setData: vi.fn().mockReturnThis(),
           }),
         }
         cameras: any = {
@@ -35,6 +41,7 @@ vi.mock('phaser', () => {
               on: vi.fn(),
             }),
           },
+          on: vi.fn(),
         }
         scene: any = {
           start: vi.fn(),

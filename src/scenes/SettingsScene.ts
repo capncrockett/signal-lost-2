@@ -1,6 +1,12 @@
 import Phaser from 'phaser'
 import { AudioManager } from '../audio'
 import { GameState } from '../state'
+import {
+  smallButtonStyle,
+  smallButtonHoverStyle,
+  smallButtonFocusStyle,
+  subtitleStyle
+} from '../utils/menuStyles'
 
 /**
  * Settings scene for the game
@@ -12,9 +18,12 @@ export default class SettingsScene extends Phaser.Scene {
   private moveSoundButton!: Phaser.GameObjects.Text
   private debugButton!: Phaser.GameObjects.Text
   private backButton!: Phaser.GameObjects.Text
+  private focusIndicator!: Phaser.GameObjects.Rectangle
+  private selectedButton: number = 0
+  private buttons: Phaser.GameObjects.Text[] = []
 
   constructor() {
-    super({ key: 'settings' })
+    super({ key: 'settings', active: false, visible: false })
   }
 
   init(data: { gameState?: GameState }): void {
@@ -31,42 +40,32 @@ export default class SettingsScene extends Phaser.Scene {
 
     // Create title
     this.add
-      .text(this.cameras.main.centerX, this.cameras.main.height * 0.1, 'SETTINGS', {
-        fontFamily: 'monospace',
-        fontSize: '32px',
-        color: '#ffffff',
-        align: 'center',
-        stroke: '#000000',
-        strokeThickness: 4,
-      })
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.1, 'SETTINGS', subtitleStyle)
       .setOrigin(0.5)
+      .setData('test-id', 'settings-title')
 
-    // Create settings buttons
-    const buttonStyle = {
-      fontFamily: 'monospace',
-      fontSize: '20px',
-      color: '#ffffff',
-      align: 'center',
-    }
-
-    const buttonHoverStyle = {
-      fontFamily: 'monospace',
-      fontSize: '20px',
-      color: '#ffff00',
-      align: 'center',
-    }
+    // Create focus indicator (initially hidden)
+    this.focusIndicator = this.add.rectangle(0, 0, 200, 40, 0x333333)
+      .setOrigin(0.5)
+      .setAlpha(0)
+      .setData('test-id', 'focus-indicator')
 
     // Audio toggle button
     const audioText = this.audio.isMuted() ? 'Audio: OFF' : 'Audio: ON'
     this.audioButton = this.add
-      .text(this.cameras.main.centerX, this.cameras.main.height * 0.3, audioText, buttonStyle)
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.3, audioText, smallButtonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
+      .setData('test-id', 'audio-button')
       .on('pointerover', () => {
-        this.audioButton.setStyle(buttonHoverStyle)
+        if (this.selectedButton !== 0) {
+          this.audioButton.setStyle(smallButtonHoverStyle)
+        }
       })
       .on('pointerout', () => {
-        this.audioButton.setStyle(buttonStyle)
+        if (this.selectedButton !== 0) {
+          this.audioButton.setStyle(smallButtonStyle)
+        }
       })
       .on('pointerdown', () => {
         const muted = this.audio.toggleMute()
@@ -79,14 +78,19 @@ export default class SettingsScene extends Phaser.Scene {
     // Movement sound toggle button
     const moveSoundText = this.gameState.player.moveSound ? 'Movement Sounds: ON' : 'Movement Sounds: OFF'
     this.moveSoundButton = this.add
-      .text(this.cameras.main.centerX, this.cameras.main.height * 0.4, moveSoundText, buttonStyle)
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.4, moveSoundText, smallButtonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
+      .setData('test-id', 'move-sound-button')
       .on('pointerover', () => {
-        this.moveSoundButton.setStyle(buttonHoverStyle)
+        if (this.selectedButton !== 1) {
+          this.moveSoundButton.setStyle(smallButtonHoverStyle)
+        }
       })
       .on('pointerout', () => {
-        this.moveSoundButton.setStyle(buttonStyle)
+        if (this.selectedButton !== 1) {
+          this.moveSoundButton.setStyle(smallButtonStyle)
+        }
       })
       .on('pointerdown', () => {
         this.gameState.player.moveSound = !this.gameState.player.moveSound
@@ -97,14 +101,19 @@ export default class SettingsScene extends Phaser.Scene {
     // Debug overlay toggle button
     const debugText = this.gameState.debug.showOverlay ? 'Debug Overlay: ON' : 'Debug Overlay: OFF'
     this.debugButton = this.add
-      .text(this.cameras.main.centerX, this.cameras.main.height * 0.5, debugText, buttonStyle)
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.5, debugText, smallButtonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
+      .setData('test-id', 'debug-button')
       .on('pointerover', () => {
-        this.debugButton.setStyle(buttonHoverStyle)
+        if (this.selectedButton !== 2) {
+          this.debugButton.setStyle(smallButtonHoverStyle)
+        }
       })
       .on('pointerout', () => {
-        this.debugButton.setStyle(buttonStyle)
+        if (this.selectedButton !== 2) {
+          this.debugButton.setStyle(smallButtonStyle)
+        }
       })
       .on('pointerdown', () => {
         this.gameState.debug.showOverlay = !this.gameState.debug.showOverlay
@@ -114,19 +123,27 @@ export default class SettingsScene extends Phaser.Scene {
 
     // Back button
     this.backButton = this.add
-      .text(this.cameras.main.centerX, this.cameras.main.height * 0.7, 'Back to Menu', buttonStyle)
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.7, 'Back to Menu', smallButtonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
+      .setData('test-id', 'back-button')
       .on('pointerover', () => {
-        this.backButton.setStyle(buttonHoverStyle)
+        if (this.selectedButton !== 3) {
+          this.backButton.setStyle(smallButtonHoverStyle)
+        }
       })
       .on('pointerout', () => {
-        this.backButton.setStyle(buttonStyle)
+        if (this.selectedButton !== 3) {
+          this.backButton.setStyle(smallButtonStyle)
+        }
       })
       .on('pointerdown', () => {
         this.audio.playNote('G4', '8n')
         this.scene.start('menu')
       })
+
+    // Store all buttons in array for easier navigation
+    this.buttons = [this.audioButton, this.moveSoundButton, this.debugButton, this.backButton]
 
     // Play intro sound
     this.audio.playSequence(['G4', 'E4', 'C4'], ['8n', '8n', '4n'], '8n')
@@ -154,6 +171,9 @@ export default class SettingsScene extends Phaser.Scene {
 
     // Add keyboard navigation
     this.setupKeyboardNavigation()
+
+    // Set initial focus
+    this.updateFocusIndicator()
   }
 
   /**
@@ -169,38 +189,22 @@ export default class SettingsScene extends Phaser.Scene {
     const spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
     const escKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
 
-    // Track selected button
-    let selectedButton = 0
-    const buttons = [this.audioButton, this.moveSoundButton, this.debugButton, this.backButton]
+    // Set initial selected button
+    this.selectedButton = 0
 
-    // Highlight the first button by default
-    buttons[selectedButton].setStyle({
-      fontFamily: 'monospace',
-      fontSize: '20px',
-      color: '#ffff00',
-      align: 'center',
-    })
+    // Apply focus style to the first button
+    this.buttons[this.selectedButton].setStyle(smallButtonFocusStyle)
 
     // Handle up key
     upKey.on('down', () => {
       // Reset current button style
-      buttons[selectedButton].setStyle({
-        fontFamily: 'monospace',
-        fontSize: '20px',
-        color: '#ffffff',
-        align: 'center',
-      })
+      this.buttons[this.selectedButton].setStyle(smallButtonStyle)
 
       // Move selection up
-      selectedButton = (selectedButton - 1 + buttons.length) % buttons.length
+      this.selectedButton = (this.selectedButton - 1 + this.buttons.length) % this.buttons.length
 
-      // Set new button style
-      buttons[selectedButton].setStyle({
-        fontFamily: 'monospace',
-        fontSize: '20px',
-        color: '#ffff00',
-        align: 'center',
-      })
+      // Update focus indicator
+      this.updateFocusIndicator()
 
       // Play sound
       this.audio.playNote('A3', '32n')
@@ -209,23 +213,13 @@ export default class SettingsScene extends Phaser.Scene {
     // Handle down key
     downKey.on('down', () => {
       // Reset current button style
-      buttons[selectedButton].setStyle({
-        fontFamily: 'monospace',
-        fontSize: '20px',
-        color: '#ffffff',
-        align: 'center',
-      })
+      this.buttons[this.selectedButton].setStyle(smallButtonStyle)
 
       // Move selection down
-      selectedButton = (selectedButton + 1) % buttons.length
+      this.selectedButton = (this.selectedButton + 1) % this.buttons.length
 
-      // Set new button style
-      buttons[selectedButton].setStyle({
-        fontFamily: 'monospace',
-        fontSize: '20px',
-        color: '#ffff00',
-        align: 'center',
-      })
+      // Update focus indicator
+      this.updateFocusIndicator()
 
       // Play sound
       this.audio.playNote('A3', '32n')
@@ -237,19 +231,19 @@ export default class SettingsScene extends Phaser.Scene {
       this.audio.playNote('C4', '8n')
 
       // Trigger the selected button
-      if (selectedButton === 0) {
+      if (this.selectedButton === 0) {
         // Toggle audio
         const muted = this.audio.toggleMute()
         this.audioButton.setText(muted ? 'Audio: OFF' : 'Audio: ON')
-      } else if (selectedButton === 1) {
+      } else if (this.selectedButton === 1) {
         // Toggle movement sounds
         this.gameState.player.moveSound = !this.gameState.player.moveSound
         this.moveSoundButton.setText(this.gameState.player.moveSound ? 'Movement Sounds: ON' : 'Movement Sounds: OFF')
-      } else if (selectedButton === 2) {
+      } else if (this.selectedButton === 2) {
         // Toggle debug overlay
         this.gameState.debug.showOverlay = !this.gameState.debug.showOverlay
         this.debugButton.setText(this.gameState.debug.showOverlay ? 'Debug Overlay: ON' : 'Debug Overlay: OFF')
-      } else if (selectedButton === 3) {
+      } else if (this.selectedButton === 3) {
         // Back to menu
         this.scene.start('menu')
       }
@@ -263,5 +257,48 @@ export default class SettingsScene extends Phaser.Scene {
       this.audio.playNote('G4', '8n')
       this.scene.start('menu')
     })
+
+    // Handle mouse movement to update focus
+    this.input.on('pointermove', (pointer: Phaser.Input.Pointer) => {
+      const previousButton = this.selectedButton;
+
+      // Check if pointer is over any button
+      for (let i = 0; i < this.buttons.length; i++) {
+        const button = this.buttons[i];
+        if (button.getBounds().contains(pointer.x, pointer.y)) {
+          // Reset previous button style
+          this.buttons[this.selectedButton].setStyle(smallButtonStyle);
+
+          // Update selected button
+          this.selectedButton = i;
+
+          // Update focus indicator
+          this.updateFocusIndicator();
+
+          break;
+        }
+      }
+    });
+  }
+
+  /**
+   * Update the focus indicator position and visibility
+   */
+  private updateFocusIndicator(): void {
+    if (this.buttons.length === 0) return;
+
+    // Get the currently selected button
+    const button = this.buttons[this.selectedButton];
+
+    // Update focus indicator position and size
+    this.focusIndicator.setPosition(button.x, button.y);
+    this.focusIndicator.setSize(button.width + 20, button.height + 10);
+
+    // Make sure it's visible and behind the text
+    this.focusIndicator.setAlpha(1);
+    this.focusIndicator.setDepth(button.depth - 1);
+
+    // Apply focus style to the button
+    button.setStyle(smallButtonFocusStyle);
   }
 }

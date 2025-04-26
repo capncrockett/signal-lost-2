@@ -82,6 +82,7 @@ export default class GameScene extends Phaser.Scene {
       this.input.keyboard.on('keydown-ESC', () => {
         this.audio.playNote('E4', '8n')
         this.scene.start('menu')
+        console.log('Returning to menu via ESC key')
       })
     }
 
