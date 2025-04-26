@@ -19,7 +19,7 @@ export default class SettingsScene extends Phaser.Scene {
   private debugButton!: Phaser.GameObjects.Text
   private backButton!: Phaser.GameObjects.Text
   private focusIndicator!: Phaser.GameObjects.Rectangle
-  private selectedButton: number = 0
+  private selectedButton = 0
   private buttons: Phaser.GameObjects.Text[] = []
 
   constructor() {

@@ -16,7 +16,7 @@ export default class MenuScene extends Phaser.Scene {
   private levelSelectButton!: Phaser.GameObjects.Text
   private settingsButton!: Phaser.GameObjects.Text
   private focusIndicator!: Phaser.GameObjects.Rectangle
-  private selectedButton: number = 0
+  private selectedButton = 0
   private buttons: Phaser.GameObjects.Text[] = []
 
   constructor() {
