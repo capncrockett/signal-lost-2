@@ -170,7 +170,18 @@ The [menu-system.md](./docs/menu-system.md) provides detailed documentation on t
 - Best practices for menu design
 - Troubleshooting common issues
 
-This guide serves as a valuable reference to prevent over-engineering and help break out of development loops by providing practical, tested approaches to common game development challenges.
+### Puzzle Types Documentation
+
+The [puzzle-types.md](./docs/puzzle-types.md) provides comprehensive documentation on the game's puzzle mechanics, including:
+
+- Blocks and targets puzzle mechanics
+- Switches and doors interaction
+- Keys and locked doors functionality
+- Teleporters implementation
+- Puzzle Engine API reference
+- Examples for creating custom puzzle levels
+
+These guides serve as valuable references to prevent over-engineering and help break out of development loops by providing practical, tested approaches to common game development challenges.
 
 ## ✅ Current Progress
 
@@ -196,4 +207,4 @@ This guide serves as a valuable reference to prevent over-engineering and help b
 - Add save/load functionality
 - Add more puzzle types (pressure plates, moving platforms)
 
-See [TODO.md](./TODO.md) for a detailed list of current issues and next steps.
+See [TODO.md](./TODO.md), [TODO-ALPHA.md](./TODO-ALPHA.md), and [TODO-BETA.md](./TODO-BETA.md) for detailed lists of current issues and next steps.

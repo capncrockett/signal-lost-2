@@ -12,7 +12,13 @@
 
 ### High Priority
 
-- [ ] Review and update documentation for new puzzle types
+- [x] Review and update documentation for new puzzle types
+  - ✅ Created comprehensive puzzle types documentation
+  - ✅ Added documentation for blocks and targets
+  - ✅ Added documentation for switches and doors
+  - ✅ Added documentation for keys and locked doors
+  - ✅ Added documentation for teleporters
+  - ✅ Added Puzzle Engine API reference
 - [ ] Ensure E2E test coverage for all new features
 
 ### Medium Priority
