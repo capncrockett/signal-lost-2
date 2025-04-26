@@ -42,6 +42,9 @@ jobs:
 
       - name: Run E2E tests (Playwright)
         run: npm run test:e2e:agent
+        env:
+          # Set CI environment variable to enable CI-specific optimizations
+          CI: true
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
