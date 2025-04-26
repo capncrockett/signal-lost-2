@@ -24,7 +24,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private moveSound = false
   private interactKey: Phaser.Input.Keyboard.Key
   private interactFeedback?: Phaser.GameObjects.Rectangle
-  private movementBlocked = false
+  // TODO: Implement movement blocking for obstacles
+  // private movementBlocked = false
   private lastDirection = { x: 0, y: 0 }
 
   constructor(config: PlayerConfig) {
@@ -44,14 +45,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setFriction(0.5, 0.5) // Add friction for smoother movement
 
     // Create visual feedback for interaction
-    this.interactFeedback = config.scene.add.rectangle(
-      this.x,
-      this.y,
-      32,
-      32,
-      0xffff00,
-      0.3
-    )
+    this.interactFeedback = config.scene.add.rectangle(this.x, this.y, 32, 32, 0xffff00, 0.3)
     this.interactFeedback.setVisible(false)
 
     // Set up input
@@ -206,9 +200,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.puzzleEngine.isBlockAt(blockX, blockY)) {
       // Get the block entity
       const blockEntity = Object.values(this.gameState.level.entities).find(
-        entity => entity.type === 'block' &&
-          Math.round(entity.x) === blockX &&
-          Math.round(entity.y) === blockY
+        entity => entity.type === 'block' && Math.round(entity.x) === blockX && Math.round(entity.y) === blockY
       )
 
       if (blockEntity) {

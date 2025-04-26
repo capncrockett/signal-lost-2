@@ -140,37 +140,28 @@ export default class GameScene extends Phaser.Scene {
     this.audio.playSequence(['C4', 'E4', 'G4', 'C5'], ['8n', '8n', '8n', '4n'], '8n')
 
     // Show level completion message
-    const completionText = this.add
-      .text(
-        this.cameras.main.centerX,
-        this.cameras.main.centerY - 50,
-        'Level Complete!',
-        {
-          fontFamily: 'monospace',
-          fontSize: '32px',
-          color: '#ffffff',
-          backgroundColor: '#000000',
-          padding: { x: 20, y: 10 },
-        }
-      )
+    // We create the text but don't need to reference it later
+    this.add
+      .text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'Level Complete!', {
+        fontFamily: 'monospace',
+        fontSize: '32px',
+        color: '#ffffff',
+        backgroundColor: '#000000',
+        padding: { x: 20, y: 10 },
+      })
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(100)
 
     // Add continue button
     const continueButton = this.add
-      .text(
-        this.cameras.main.centerX,
-        this.cameras.main.centerY + 50,
-        'Continue',
-        {
-          fontFamily: 'monospace',
-          fontSize: '24px',
-          color: '#ffffff',
-          backgroundColor: '#333333',
-          padding: { x: 20, y: 10 },
-        }
-      )
+      .text(this.cameras.main.centerX, this.cameras.main.centerY + 50, 'Continue', {
+        fontFamily: 'monospace',
+        fontSize: '24px',
+        color: '#ffffff',
+        backgroundColor: '#333333',
+        padding: { x: 20, y: 10 },
+      })
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setDepth(100)
