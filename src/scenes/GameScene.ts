@@ -141,7 +141,7 @@ export default class GameScene extends Phaser.Scene {
       this.audio.playSequence(['C4', 'E4', 'G4', 'C5'], ['8n', '8n', '8n', '4n'], '8n')
 
       // Show level completion message
-      const completionText = this.add
+      this.add
         .text(
           this.cameras.main.centerX,
           this.cameras.main.centerY - 50,
@@ -157,6 +157,8 @@ export default class GameScene extends Phaser.Scene {
         .setOrigin(0.5)
         .setScrollFactor(0)
         .setDepth(100)
+
+      // TODO: Add animations or interactions with the completion text in the future
 
       // Add continue button
       const continueButton = this.add

@@ -47,79 +47,79 @@ export class PlayerCI {
  * CI-compatible puzzle engine implementation
  */
 export class PuzzleEngineCI {
-  private gameState: GameState
 
-  constructor(gameState: GameState) {
-    this.gameState = gameState
+  constructor(_gameState: GameState) {
+    // We don't need to store gameState in this CI implementation
+    // TODO: In the future, implement actual puzzle logic that uses gameState
   }
 
   /**
    * Check if a block is at the given position
    */
-  isBlockAt(x: number, y: number): boolean {
+  isBlockAt(_x: number, _y: number): boolean {
     return false
   }
 
   /**
    * Try to move a block
    */
-  tryMoveBlock(blockId: string, dx: number, dy: number): boolean {
+  tryMoveBlock(_blockId: string, _dx: number, _dy: number): boolean {
     return true
   }
 
   /**
    * Check if a key is at the given position
    */
-  isKeyAt(x: number, y: number): boolean {
+  isKeyAt(_x: number, _y: number): boolean {
     return false
   }
 
   /**
    * Collect a key
    */
-  collectKey(x: number, y: number): boolean {
+  collectKey(_x: number, _y: number): boolean {
     return true
   }
 
   /**
    * Check if a locked door is at the given position
    */
-  isLockedDoorAt(x: number, y: number): boolean {
+  isLockedDoorAt(_x: number, _y: number): boolean {
     return false
   }
 
   /**
    * Try to unlock a door
    */
-  tryUnlockDoor(x: number, y: number): boolean {
+  tryUnlockDoor(_x: number, _y: number): boolean {
     return true
   }
 
   /**
    * Check if a teleporter is at the given position
    */
-  isTeleporterAt(x: number, y: number): boolean {
+  isTeleporterAt(_x: number, _y: number): boolean {
     return false
   }
 
   /**
    * Use a teleporter
    */
-  useTeleporter(x: number, y: number): { success: boolean; newX?: number; newY?: number } {
+  useTeleporter(_x: number, _y: number): { success: boolean; newX?: number; newY?: number } {
     return { success: true, newX: 0, newY: 0 }
   }
 
   /**
    * Check if a switch is at the given position
    */
-  isSwitchAt(x: number, y: number): boolean {
+  isSwitchAt(_x: number, _y: number): boolean {
     return false
   }
 
   /**
    * Activate a switch
    */
-  activateSwitch(x: number, y: number): boolean {
+  activateSwitch(_x: number, _y: number): boolean {
     return true
   }
 
