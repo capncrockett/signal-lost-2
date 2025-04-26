@@ -170,7 +170,18 @@ The [menu-system.md](./docs/menu-system.md) provides detailed documentation on t
 - Best practices for menu design
 - Troubleshooting common issues
 
-This guide serves as a valuable reference to prevent over-engineering and help break out of development loops by providing practical, tested approaches to common game development challenges.
+### Puzzle Types Documentation
+
+The [puzzle-types.md](./docs/puzzle-types.md) provides comprehensive documentation on the game's puzzle mechanics, including:
+
+- Blocks and targets puzzle mechanics
+- Switches and doors interaction
+- Keys and locked doors functionality
+- Teleporters implementation
+- Puzzle Engine API reference
+- Examples for creating custom puzzle levels
+
+These guides serve as valuable references to prevent over-engineering and help break out of development loops by providing practical, tested approaches to common game development challenges.
 
 ## ✅ Current Progress
 
@@ -196,4 +207,22 @@ This guide serves as a valuable reference to prevent over-engineering and help b
 - Add save/load functionality
 - Add more puzzle types (pressure plates, moving platforms)
 
-See [TODO.md](./TODO.md) for a detailed list of current issues and next steps.
+See [TODO.md](./TODO.md), [TODO-ALPHA.md](./TODO-ALPHA.md), and [TODO-BETA.md](./TODO-BETA.md) for detailed lists of current issues and next steps.
+
+## 🚀 Deployment
+
+The game is deployed to GitHub Pages using a GitHub Actions workflow. To deploy a new version:
+
+1. Ensure all changes are merged to the `develop` branch and all tests are passing
+2. Run the deployment script with a version number:
+   ```bash
+   ./scripts/deploy.sh v1.0.0
+   ```
+3. The workflow will:
+   - Create a release branch from `develop`
+   - Configure the application for GitHub Pages
+   - Build and test the application
+   - Deploy to GitHub Pages
+   - Create PRs to merge the release branch to both `main` and back to `develop`
+
+Once deployed, the game will be available at: https://capncrockett.github.io/signal-lost-2/
