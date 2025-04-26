@@ -12,6 +12,7 @@ export class PlayerCI {
   private gameState: GameState
   private x: number = 0
   private y: number = 0
+  private moveSound: boolean = false
 
   constructor(gameState: GameState) {
     this.gameState = gameState
@@ -39,7 +40,15 @@ export class PlayerCI {
    * Toggle movement sound
    */
   toggleMoveSound(): boolean {
-    return true
+    this.moveSound = !this.moveSound
+    return this.moveSound
+  }
+
+  /**
+   * Enable or disable movement sounds
+   */
+  setMoveSound(enabled: boolean): void {
+    this.moveSound = enabled
   }
 }
 
