@@ -199,7 +199,6 @@ These guides serve as valuable references to prevent over-engineering and help b
 
 ## 🔮 Next Steps
 
-- Fix E2E tests to work with the new codebase structure
 - Create additional levels with increasing difficulty
 - Improve graphics with custom sprites
 - Add story elements and objectives
@@ -207,7 +206,7 @@ These guides serve as valuable references to prevent over-engineering and help b
 - Add save/load functionality
 - Add more puzzle types (pressure plates, moving platforms)
 
-See [TODO.md](./TODO.md), [TODO-ALPHA.md](./TODO-ALPHA.md), and [TODO-BETA.md](./TODO-BETA.md) for detailed lists of current issues and next steps.
+See [ROADMAP.md](./ROADMAP.md) for a detailed development roadmap and [GitHub Issues](https://github.com/capncrockett/signal-lost-2/issues) for specific tasks and bugs.
 
 ## 🚀 Deployment
 
