@@ -44,14 +44,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Create visual feedback for interaction
     try {
-      this.interactFeedback = config.scene.add.rectangle(
-        this.x,
-        this.y,
-        32,
-        32,
-        0xffff00,
-        0.3
-      )
+      this.interactFeedback = config.scene.add.rectangle(this.x, this.y, 32, 32, 0xffff00, 0.3)
       this.interactFeedback.setVisible(false)
     } catch (error) {
       console.warn('Failed to create interaction feedback, likely running in CI environment:', error)
@@ -85,7 +78,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setVelocity(0)
 
     // Store current direction
-    let currentDirection = { x: 0, y: 0 }
+    const currentDirection = { x: 0, y: 0 }
 
     // Horizontal movement
     if (this.cursors.left?.isDown) {
@@ -213,9 +206,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.puzzleEngine.isBlockAt(blockX, blockY)) {
       // Get the block entity
       const blockEntity = Object.values(this.gameState.level.entities).find(
-        entity => entity.type === 'block' &&
-          Math.round(entity.x) === blockX &&
-          Math.round(entity.y) === blockY
+        entity => entity.type === 'block' && Math.round(entity.x) === blockX && Math.round(entity.y) === blockY
       )
 
       if (blockEntity) {
