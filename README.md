@@ -208,3 +208,21 @@ These guides serve as valuable references to prevent over-engineering and help b
 - Add more puzzle types (pressure plates, moving platforms)
 
 See [TODO.md](./TODO.md), [TODO-ALPHA.md](./TODO-ALPHA.md), and [TODO-BETA.md](./TODO-BETA.md) for detailed lists of current issues and next steps.
+
+## 🚀 Deployment
+
+The game is deployed to GitHub Pages using a GitHub Actions workflow. To deploy a new version:
+
+1. Ensure all changes are merged to the `develop` branch and all tests are passing
+2. Run the deployment script with a version number:
+   ```bash
+   ./scripts/deploy.sh v1.0.0
+   ```
+3. The workflow will:
+   - Create a release branch from `develop`
+   - Configure the application for GitHub Pages
+   - Build and test the application
+   - Deploy to GitHub Pages
+   - Create PRs to merge the release branch to both `main` and back to `develop`
+
+Once deployed, the game will be available at: https://capncrockett.github.io/signal-lost-2/
