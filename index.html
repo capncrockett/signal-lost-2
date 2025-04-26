@@ -65,38 +65,74 @@
     </div>
 
     <script type="module" src="/src/main.ts"></script>
+    <!--
+      Note: When built for production, Vite will replace the above script tag with:
+      <script type="module" crossorigin src="/signal-lost-2/assets/index.HASH.js"></script>
+    -->
     <script>
       // Debug panel functionality
       document.addEventListener('DOMContentLoaded', () => {
-        // Toggle overlay button
-        document.getElementById('toggle-overlay').addEventListener('click', () => {
+        // Wait for game to initialize
+        const waitForGameState = () => {
           if (window.GAME_STATE) {
-            window.GAME_STATE.debug.showOverlay = !window.GAME_STATE.debug.showOverlay
+            setupDebugControls()
+          } else {
+            // Check again in 100ms
+            setTimeout(waitForGameState, 100)
           }
-        })
+        }
 
-        // Toggle god mode button
-        document.getElementById('toggle-godmode').addEventListener('click', () => {
-          if (window.GAME_STATE) {
-            window.GAME_STATE.debug.godMode = !window.GAME_STATE.debug.godMode
-          }
-        })
+        // Setup debug controls once game state is available
+        const setupDebugControls = () => {
+          console.log('Game state initialized, setting up debug controls')
 
-        // Next level button
-        document.getElementById('next-level').addEventListener('click', () => {
-          if (window.GAME_STATE) {
-            // Level switching between all available levels
-            const levels = ['start', 'puzzle1', 'puzzle2', 'puzzle3', 'puzzle4', 'puzzle5']
-            const currentIndex = levels.indexOf(window.GAME_STATE.level.id)
-            const nextIndex = (currentIndex + 1) % levels.length
-            const nextLevel = levels[nextIndex]
-
-            const game = document.querySelector('canvas')?.parentElement?.__PHASER_GAME__
-            if (game) {
-              game.scene.start('game', { levelId: nextLevel })
+          // Toggle overlay button
+          document.getElementById('toggle-overlay').addEventListener('click', () => {
+            if (window.GAME_STATE) {
+              window.GAME_STATE.debug.showOverlay = !window.GAME_STATE.debug.showOverlay
+              console.log(`Debug overlay ${window.GAME_STATE.debug.showOverlay ? 'enabled' : 'disabled'}`)
             }
-          }
-        })
+          })
+
+          // Toggle god mode button
+          document.getElementById('toggle-godmode').addEventListener('click', () => {
+            if (window.GAME_STATE) {
+              window.GAME_STATE.debug.godMode = !window.GAME_STATE.debug.godMode
+              console.log(`God mode ${window.GAME_STATE.debug.godMode ? 'enabled' : 'disabled'}`)
+            }
+          })
+
+          // Next level button
+          document.getElementById('next-level').addEventListener('click', () => {
+            if (window.GAME_STATE) {
+              // Level switching between all available levels
+              const levels = ['start', 'puzzle1', 'puzzle2', 'puzzle3', 'puzzle4', 'puzzle5']
+              const currentIndex = levels.indexOf(window.GAME_STATE.level.id)
+              const nextIndex = (currentIndex + 1) % levels.length
+              const nextLevel = levels[nextIndex]
+              console.log(`Switching to level: ${nextLevel}`)
+
+              // Get the Phaser game instance
+              const game = document.querySelector('canvas')?.parentElement?.__PHASER_GAME__
+              if (game) {
+                game.scene.start('game', { levelId: nextLevel })
+              } else {
+                console.error('Could not find Phaser game instance')
+              }
+            }
+          })
+
+          // Add keyboard shortcut for debug overlay (D key)
+          document.addEventListener('keydown', event => {
+            if (event.key.toLowerCase() === 'd' && window.GAME_STATE) {
+              window.GAME_STATE.debug.showOverlay = !window.GAME_STATE.debug.showOverlay
+              console.log(`Debug overlay ${window.GAME_STATE.debug.showOverlay ? 'enabled' : 'disabled'}`)
+            }
+          })
+        }
+
+        // Start waiting for game state
+        waitForGameState()
       })
     </script>
   </body>
