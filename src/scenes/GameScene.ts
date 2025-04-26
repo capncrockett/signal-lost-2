@@ -142,18 +142,13 @@ export default class GameScene extends Phaser.Scene {
 
       // Show level completion message
       this.add
-        .text(
-          this.cameras.main.centerX,
-          this.cameras.main.centerY - 50,
-          'Level Complete!',
-          {
-            fontFamily: 'monospace',
-            fontSize: '32px',
-            color: '#ffffff',
-            backgroundColor: '#000000',
-            padding: { x: 20, y: 10 },
-          }
-        )
+        .text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'Level Complete!', {
+          fontFamily: 'monospace',
+          fontSize: '32px',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: { x: 20, y: 10 },
+        })
         .setOrigin(0.5)
         .setScrollFactor(0)
         .setDepth(100)
@@ -162,18 +157,13 @@ export default class GameScene extends Phaser.Scene {
 
       // Add continue button
       const continueButton = this.add
-        .text(
-          this.cameras.main.centerX,
-          this.cameras.main.centerY + 50,
-          'Continue',
-          {
-            fontFamily: 'monospace',
-            fontSize: '24px',
-            color: '#ffffff',
-            backgroundColor: '#333333',
-            padding: { x: 20, y: 10 },
-          }
-        )
+        .text(this.cameras.main.centerX, this.cameras.main.centerY + 50, 'Continue', {
+          fontFamily: 'monospace',
+          fontSize: '24px',
+          color: '#ffffff',
+          backgroundColor: '#333333',
+          padding: { x: 20, y: 10 },
+        })
         .setOrigin(0.5)
         .setScrollFactor(0)
         .setDepth(100)

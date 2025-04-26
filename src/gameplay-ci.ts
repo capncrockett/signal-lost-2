@@ -10,8 +10,8 @@ import { GameState } from './state'
  */
 export class PlayerCI {
   private gameState: GameState
-  private x: number = 0
-  private y: number = 0
+  private x = 0
+  private y = 0
 
   constructor(gameState: GameState) {
     this.gameState = gameState
@@ -46,8 +46,8 @@ export class PlayerCI {
 /**
  * CI-compatible puzzle engine implementation
  */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export class PuzzleEngineCI {
-
   constructor(_gameState: GameState) {
     // We don't need to store gameState in this CI implementation
     // TODO: In the future, implement actual puzzle logic that uses gameState
@@ -135,7 +135,7 @@ export class PuzzleEngineCI {
  * CI-compatible audio manager implementation
  */
 export class AudioManagerCI {
-  private muted: boolean = false
+  private muted = false
 
   /**
    * Play a single note
