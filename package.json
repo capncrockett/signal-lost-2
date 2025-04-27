@@ -8,6 +8,8 @@
     "start": "vite",
     "build": "tsc && vite build",
     "build:check": "tsc --noEmit && vite build",
+    "type-check": "tsc --noEmit",
+    "type-check:ci": "./scripts/check-typescript.sh",
     "preview": "vite preview",
     "test:unit": "vitest run",
     "test:unit:watch": "vitest",
@@ -16,7 +18,8 @@
     "test:e2e:report": "node scripts/parse-test-results.js",
     "lint": "eslint src --ext ts",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
+    "pre-commit": "npm run type-check && npm run lint && npm run format:check"
   },
   "devDependencies": {
     "@playwright/test": "^1.32.0",

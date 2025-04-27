@@ -145,7 +145,7 @@ export class PuzzleEngine {
 
     if (allTargetsCovered) {
       if (this.audio) {
-        this.audio.playSoundEffect('success')
+        this.audio.playSoundEffect('levelComplete')
       }
       this.gameState.solveLevel()
       return true
@@ -176,7 +176,7 @@ export class PuzzleEngine {
     })
 
     if (this.audio) {
-      this.audio.playSoundEffect('success')
+      this.audio.playSoundEffect('interact')
     }
 
     // Check if all switches are activated
@@ -201,6 +201,9 @@ export class PuzzleEngine {
     const allSwitchesActivated = switches.every(switchEntity => switchEntity.activated === true)
 
     if (allSwitchesActivated) {
+      if (this.audio) {
+        this.audio.playSoundEffect('levelComplete')
+      }
       this.gameState.solveLevel()
       return true
     }
@@ -226,6 +229,34 @@ export class PuzzleEngine {
 
     if (this.audio) {
       this.audio.playSoundEffect('pickup')
+    }
+
+    // Add visual feedback
+    try {
+      const gameObject = keyEntity.gameObject
+      if (gameObject && 'setTint' in gameObject) {
+        const sprite = gameObject as Phaser.GameObjects.Image
+        sprite.setTint(0xffff00)
+
+        // Fade out the key
+        if ('scene' in gameObject) {
+          const scene = (gameObject as any).scene as Phaser.Scene
+          scene.tweens.add({
+            targets: gameObject,
+            alpha: 0,
+            duration: 300,
+            onComplete: () => {
+              try {
+                sprite.setVisible(false)
+              } catch (error) {
+                // Ignore errors in CI
+              }
+            },
+          })
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to show key collection feedback, likely running in CI environment:', error)
     }
 
     return true
@@ -257,7 +288,35 @@ export class PuzzleEngine {
     this.gameState.updateEntity(doorEntity.id, { active: false })
 
     if (this.audio) {
-      this.audio.playSoundEffect('success')
+      this.audio.playSoundEffect('unlock')
+    }
+
+    // Add visual feedback
+    try {
+      const gameObject = doorEntity.gameObject
+      if (gameObject && 'setTint' in gameObject) {
+        const sprite = gameObject as Phaser.GameObjects.Image
+        sprite.setTint(0x00ff00)
+
+        // Fade out the door
+        if ('scene' in gameObject) {
+          const scene = (gameObject as any).scene as Phaser.Scene
+          scene.tweens.add({
+            targets: gameObject,
+            alpha: 0,
+            duration: 500,
+            onComplete: () => {
+              try {
+                sprite.setVisible(false)
+              } catch (error) {
+                // Ignore errors in CI
+              }
+            },
+          })
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to show door unlock feedback, likely running in CI environment:', error)
     }
 
     // Check if all locked doors are unlocked
@@ -277,6 +336,9 @@ export class PuzzleEngine {
 
     // If there are no locked doors left, this puzzle type is complete
     if (lockedDoors.length === 0) {
+      if (this.audio) {
+        this.audio.playSoundEffect('levelComplete')
+      }
       this.gameState.solveLevel()
       return true
     }
@@ -308,7 +370,7 @@ export class PuzzleEngine {
     const targetTeleporter = otherTeleporters[0]
 
     if (this.audio) {
-      this.audio.playSoundEffect('success')
+      this.audio.playSoundEffect('teleport')
     }
 
     return {
