@@ -141,6 +141,7 @@ export default class GameScene extends Phaser.Scene {
       this.audio.playSequence(['C4', 'E4', 'G4', 'C5'], ['8n', '8n', '8n', '4n'], '8n')
 
       // Show level completion message
+      // We create the text but don't need to reference it later
       this.add
         .text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'Level Complete!', {
           fontFamily: 'monospace',
