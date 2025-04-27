@@ -107,6 +107,35 @@ export default class GameScene extends Phaser.Scene {
         this.audio.playNote('E4', '8n')
         this.scene.start('menu')
       })
+
+    // Add instructions
+    const instructions = [
+      'Arrow Keys: Move',
+      'E: Interact',
+      'M: Toggle Mute',
+      'S: Toggle Sound Effects',
+      '',
+      `Goal: ${this.currentLevel.name}`,
+    ]
+
+    // Add specific instructions based on level type
+    if (this.currentLevel.id === 'start') {
+      instructions.push('')
+      instructions.push('Push the brown block onto the red target')
+      instructions.push('Walk into the block to push it')
+    }
+
+    // Create instruction text
+    this.add
+      .text(10, 10, instructions, {
+        fontFamily: 'monospace',
+        fontSize: '14px',
+        color: '#ffffff',
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        padding: { x: 10, y: 10 },
+      })
+      .setDepth(100)
+      .setScrollFactor(0)
   }
 
   update(): void {
@@ -142,8 +171,9 @@ export default class GameScene extends Phaser.Scene {
 
       // Show level completion message
       // We create the text but don't need to reference it later
+      const completionMessage = this.currentLevel.id === 'start' ? 'Block Puzzle Solved!' : 'Level Complete!'
       this.add
-        .text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'Level Complete!', {
+        .text(this.cameras.main.centerX, this.cameras.main.centerY - 50, completionMessage, {
           fontFamily: 'monospace',
           fontSize: '32px',
           color: '#ffffff',
