@@ -10,8 +10,9 @@ import { GameState } from './state'
  */
 export class PlayerCI {
   private gameState: GameState
-  private x: number = 0
-  private y: number = 0
+  private x = 0
+  private y = 0
+  private moveSound = false
 
   constructor(gameState: GameState) {
     this.gameState = gameState
@@ -39,17 +40,26 @@ export class PlayerCI {
    * Toggle movement sound
    */
   toggleMoveSound(): boolean {
-    return true
+    this.moveSound = !this.moveSound
+    return this.moveSound
+  }
+
+  /**
+   * Enable or disable movement sounds
+   */
+  setMoveSound(enabled: boolean): void {
+    this.moveSound = enabled
   }
 }
 
 /**
  * CI-compatible puzzle engine implementation
  */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 export class PuzzleEngineCI {
-  // We don't actually use the game state in this mock implementation
   constructor(_gameState: GameState) {
-    // No need to store the game state as we don't use it
+    // We don't need to store gameState in this CI implementation
+    // TODO: In the future, implement actual puzzle logic that uses gameState
   }
 
   /**
@@ -134,7 +144,7 @@ export class PuzzleEngineCI {
  * CI-compatible audio manager implementation
  */
 export class AudioManagerCI {
-  private muted: boolean = false
+  private muted = false
 
   /**
    * Play a single note

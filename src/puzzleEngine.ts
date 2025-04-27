@@ -251,7 +251,7 @@ export class PuzzleEngine {
               } catch (error) {
                 // Ignore errors in CI
               }
-            }
+            },
           })
         }
       }
@@ -311,7 +311,7 @@ export class PuzzleEngine {
               } catch (error) {
                 // Ignore errors in CI
               }
-            }
+            },
           })
         }
       }
