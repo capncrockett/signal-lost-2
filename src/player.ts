@@ -24,6 +24,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   private moveSound = false
   private interactKey: Phaser.Input.Keyboard.Key
   private interactFeedback?: Phaser.GameObjects.Rectangle
+  // TODO: Implement movement blocking for obstacles
+  // private movementBlocked = false
   private lastDirection = { x: 0, y: 0 }
 
   constructor(config: PlayerConfig) {

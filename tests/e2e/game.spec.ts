@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { wait, waitForGameState, navigateToGame, isCanvasVisible, verifyScene } from './helpers'
 
 /**
  * Signal Lost E2E Tests
@@ -6,67 +7,6 @@ import { test, expect } from '@playwright/test'
  * These tests verify the core functionality of the game from a user perspective.
  * They simulate user interactions and verify the expected outcomes.
  */
-
-// Helper function to wait for a short time
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
-
-// Helper function to wait for game state to be initialized
-const waitForGameState = async (page: any): Promise<boolean> => {
-  const maxAttempts = 10
-  const delayBetweenAttempts = 500
-
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const gameStateExists = await page.evaluate(() => {
-      return window.GAME_STATE !== undefined
-    })
-
-    if (gameStateExists) {
-      return true
-    }
-
-    await wait(delayBetweenAttempts)
-  }
-
-  return false
-}
-
-// Helper function to navigate from menu to game
-const navigateToGame = async (page: any): Promise<void> => {
-  // Wait for the menu to be visible
-  await wait(2000)
-
-  try {
-    // Try to find and click the Start Game button
-    const startButton = page.getByText('Start Game', { exact: true })
-    await startButton.waitFor({ timeout: 5000 })
-    await startButton.click()
-  } catch (error) {
-    console.log('Start Game button not found, checking if already in game scene')
-
-    // Check if we're already in the game scene
-    const isInGameScene = await page
-      .evaluate(() => {
-        return window.GAME_STATE && window.GAME_STATE.level && window.GAME_STATE.level.id !== undefined
-      })
-      .catch(() => false)
-
-    if (!isInGameScene) {
-      // If we're not in the game scene, try to find the button with a different selector
-      try {
-        await page.locator('text=Start Game').click({ timeout: 5000 })
-      } catch (innerError) {
-        console.log('Could not find Start Game button with alternate selector')
-        // Just continue and hope we're in the right scene
-      }
-    }
-  }
-
-  // Wait for the game to initialize
-  await wait(2000)
-
-  // Wait for game state to be initialized
-  await waitForGameState(page)
-}
 test.describe('Signal Lost Game', () => {
   test('game loads and canvas is visible', async ({ page }) => {
     await page.goto('/')
@@ -186,17 +126,14 @@ test.describe('Signal Lost Game', () => {
   test('game state is accessible via window.GAME_STATE', async ({ page }) => {
     await page.goto('/')
 
-    // Wait for the game to initialize
-    await wait(1000)
-
-    // Wait for game state to be initialized
+    // Wait for game state to be initialized (using optimized helper)
     const gameStateInitialized = await waitForGameState(page)
     expect(gameStateInitialized).toBeTruthy()
 
     // Navigate to the game scene to ensure all properties are initialized
     await navigateToGame(page)
 
-    // Check if the game state has the expected properties
+    // Check if the game state has the expected properties (optimized check)
     const hasExpectedProperties = await page.evaluate(() => {
       return (
         window.GAME_STATE.player !== undefined &&
