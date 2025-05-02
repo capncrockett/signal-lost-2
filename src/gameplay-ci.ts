@@ -231,3 +231,56 @@ export class AudioManagerCI {
     console.log('Disposing audio resources')
   }
 }
+
+/**
+ * CI-compatible music manager implementation
+ */
+export class MusicManagerCI {
+  private currentTrack = ''
+
+  /**
+   * Play a specific music track
+   */
+  playTrack(trackKey: string): void {
+    console.log('Playing music track:', trackKey)
+    this.currentTrack = trackKey
+  }
+
+  /**
+   * Stop the current track
+   */
+  stopTrack(fadeOut = true, callback?: () => void): void {
+    console.log('Stopping music track:', this.currentTrack, 'with fade out:', fadeOut)
+    this.currentTrack = ''
+    if (callback) callback()
+  }
+
+  /**
+   * Set the volume for all instruments
+   */
+  setVolume(volume: number): void {
+    console.log('Setting music volume:', volume)
+  }
+
+  /**
+   * Update volume based on game state
+   */
+  updateVolume(): void {
+    console.log('Updating music volume')
+  }
+
+  /**
+   * Toggle music on/off
+   */
+  toggleMusic(): boolean {
+    console.log('Toggling music')
+    return true
+  }
+
+  /**
+   * Dispose of all resources
+   */
+  dispose(): void {
+    console.log('Disposing music resources')
+  }
+}

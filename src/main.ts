@@ -8,6 +8,9 @@ import { GameState } from './state'
 // Create a global game state
 const gameState = new GameState()
 
+// Load saved state from localStorage if available
+gameState.loadFromLocalStorage()
+
 // Make game state available globally for debugging
 declare global {
   interface Window {

@@ -4,6 +4,7 @@ import { GameState } from '../../src/state'
 import { Player } from '../../src/player'
 import { LevelData } from '../../src/levels'
 import { AudioManager } from '../../src/audio'
+import { MusicManager } from '../../src/musicManager'
 
 // Mock the AudioManager
 vi.mock('../../src/audio', () => {
@@ -16,6 +17,24 @@ vi.mock('../../src/audio', () => {
         toggleMute: vi.fn(),
         setMute: vi.fn(),
         isMuted: vi.fn(),
+        dispose: vi.fn(),
+      }
+    }),
+  }
+})
+
+// Mock the MusicManager
+vi.mock('../../src/musicManager', () => {
+  return {
+    MusicManager: vi.fn().mockImplementation(() => {
+      return {
+        playTrack: vi.fn(),
+        stopTrack: vi.fn().mockImplementation((fadeOut, callback) => {
+          if (callback) callback()
+        }),
+        setVolume: vi.fn(),
+        updateVolume: vi.fn(),
+        toggleMusic: vi.fn(),
         dispose: vi.fn(),
       }
     }),
