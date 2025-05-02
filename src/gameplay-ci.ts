@@ -249,7 +249,7 @@ export class MusicManagerCI {
   /**
    * Stop the current track
    */
-  stopTrack(fadeOut: boolean = true, callback?: () => void): void {
+  stopTrack(fadeOut = true, callback?: () => void): void {
     console.log('Stopping music track:', this.currentTrack, 'with fade out:', fadeOut)
     this.currentTrack = ''
     if (callback) callback()

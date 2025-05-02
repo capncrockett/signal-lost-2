@@ -32,14 +32,14 @@ type ToneSequence = Tone.Sequence<string> & { index: number }
 
 export class MusicManager {
   private gameState: GameState
-  private currentTrack: string = ''
-  private isPlaying: boolean = false
+  private currentTrack = ''
+  private isPlaying = false
   private instruments: ToneInstrument[] = []
   private effects: ToneEffect[] = []
   private sequences: ToneSequence[] = []
   private tracks: Record<string, TrackDefinition> = {}
   private fadeInterval: number | null = null
-  private currentVolume: number = 0
+  private currentVolume = 0
 
   constructor(config: MusicConfig) {
     this.gameState = config.gameState
@@ -75,12 +75,12 @@ export class MusicManager {
       ],
       instruments: [
         { type: 'synth', options: { oscillator: { type: 'sine' } } },
-        { type: 'fm', options: { harmonicity: 3.01 } }
+        { type: 'fm', options: { harmonicity: 3.01 } },
       ],
       effects: [
         { type: 'reverb', options: { decay: 5 } },
-        { type: 'chorus', options: { frequency: 0.5, depth: 0.7 } }
-      ]
+        { type: 'chorus', options: { frequency: 0.5, depth: 0.7 } },
+      ],
     }
 
     // Game music - more upbeat, adventurous
@@ -97,11 +97,9 @@ export class MusicManager {
       ],
       instruments: [
         { type: 'synth', options: { oscillator: { type: 'triangle' } } },
-        { type: 'am', options: { harmonicity: 1.5 } }
+        { type: 'am', options: { harmonicity: 1.5 } },
       ],
-      effects: [
-        { type: 'delay', options: { delayTime: 0.25, feedback: 0.2 } }
-      ]
+      effects: [{ type: 'delay', options: { delayTime: 0.25, feedback: 0.2 } }],
     }
 
     // Level complete music - triumphant
@@ -118,11 +116,9 @@ export class MusicManager {
       ],
       instruments: [
         { type: 'synth', options: { oscillator: { type: 'square' } } },
-        { type: 'synth', options: { oscillator: { type: 'triangle' } } }
+        { type: 'synth', options: { oscillator: { type: 'triangle' } } },
       ],
-      effects: [
-        { type: 'reverb', options: { decay: 2 } }
-      ]
+      effects: [{ type: 'reverb', options: { decay: 2 } }],
     }
 
     // Settings music - calm, ambient
@@ -139,12 +135,12 @@ export class MusicManager {
       ],
       instruments: [
         { type: 'synth', options: { oscillator: { type: 'sine' } } },
-        { type: 'fm', options: { harmonicity: 2.5 } }
+        { type: 'fm', options: { harmonicity: 2.5 } },
       ],
       effects: [
         { type: 'reverb', options: { decay: 4 } },
-        { type: 'chorus', options: { frequency: 0.3, depth: 0.5 } }
-      ]
+        { type: 'chorus', options: { frequency: 0.3, depth: 0.5 } },
+      ],
     }
   }
 
@@ -298,7 +294,7 @@ export class MusicManager {
   /**
    * Stop the current track
    */
-  stopTrack(fadeOut: boolean = true, callback?: () => void): void {
+  stopTrack(fadeOut = true, callback?: () => void): void {
     if (!this.isPlaying) {
       if (callback) callback()
       return
@@ -358,7 +354,7 @@ export class MusicManager {
   /**
    * Fade in the music
    */
-  private fadeIn(duration: number = 1000): void {
+  private fadeIn(duration = 1000): void {
     try {
       // Clear any existing fade interval
       if (this.fadeInterval !== null) {
@@ -395,7 +391,7 @@ export class MusicManager {
   /**
    * Fade out the music
    */
-  private fadeOut(callback?: () => void, duration: number = 1000): void {
+  private fadeOut(callback?: () => void, duration = 1000): void {
     try {
       // Clear any existing fade interval
       if (this.fadeInterval !== null) {

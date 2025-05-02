@@ -162,7 +162,7 @@ export default class SettingsScene extends Phaser.Scene {
       .setData('test-id', 'music-volume-text')
 
     // Handle slider drag
-    this.input.on('drag', (_pointer: Phaser.Input.Pointer, gameObject: any, dragX: number, _dragY: number) => {
+    this.input.on('drag', (_pointer: Phaser.Input.Pointer, gameObject: any, dragX: number) => {
       if (gameObject === this.musicVolumeSlider) {
         // Calculate bounds
         const minX = sliderX - sliderWidth / 2
