@@ -1,5 +1,6 @@
 import Phaser from 'phaser'
 import { AudioManager } from '../audio'
+import { MusicManager } from '../musicManager'
 import { GameState } from '../state'
 import { smallButtonStyle, smallButtonHoverStyle, smallButtonFocusStyle, subtitleStyle } from '../utils/menuStyles'
 
@@ -8,14 +9,20 @@ import { smallButtonStyle, smallButtonHoverStyle, smallButtonFocusStyle, subtitl
  */
 export default class SettingsScene extends Phaser.Scene {
   private audio!: AudioManager
+  private music!: MusicManager
   private gameState!: GameState
   private audioButton!: Phaser.GameObjects.Text
   private moveSoundButton!: Phaser.GameObjects.Text
+  private musicButton!: Phaser.GameObjects.Text
+  private musicVolumeSlider!: Phaser.GameObjects.Rectangle
+  private musicVolumeBackground!: Phaser.GameObjects.Rectangle
+  private musicVolumeText!: Phaser.GameObjects.Text
   private debugButton!: Phaser.GameObjects.Text
   private backButton!: Phaser.GameObjects.Text
   private focusIndicator!: Phaser.GameObjects.Rectangle
   private selectedButton = 0
   private buttons: Phaser.GameObjects.Text[] = []
+  private isDraggingSlider = false
 
   constructor() {
     super({ key: 'settings', active: false, visible: false })
@@ -27,6 +34,12 @@ export default class SettingsScene extends Phaser.Scene {
 
     // Initialize audio
     this.audio = new AudioManager()
+
+    // Initialize music
+    this.music = new MusicManager({ gameState: this.gameState })
+
+    // Start settings music
+    this.music.playTrack('settings')
   }
 
   create(): void {
@@ -92,12 +105,96 @@ export default class SettingsScene extends Phaser.Scene {
         this.gameState.player.moveSound = !this.gameState.player.moveSound
         this.moveSoundButton.setText(this.gameState.player.moveSound ? 'Movement Sounds: ON' : 'Movement Sounds: OFF')
         this.audio.playNote('D4', '8n')
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
       })
+
+    // Music toggle button
+    const musicText = this.gameState.audio.musicEnabled ? 'Music: ON' : 'Music: OFF'
+    this.musicButton = this.add
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.5, musicText, smallButtonStyle)
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .setData('test-id', 'music-button')
+      .on('pointerover', () => {
+        if (this.selectedButton !== 2) {
+          this.musicButton.setStyle(smallButtonHoverStyle)
+        }
+      })
+      .on('pointerout', () => {
+        if (this.selectedButton !== 2) {
+          this.musicButton.setStyle(smallButtonStyle)
+        }
+      })
+      .on('pointerdown', () => {
+        const enabled = this.music.toggleMusic()
+        this.gameState.audio.musicEnabled = enabled
+        this.musicButton.setText(enabled ? 'Music: ON' : 'Music: OFF')
+        this.audio.playNote('E4', '8n')
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
+      })
+
+    // Music volume slider
+    const sliderWidth = 200
+    const sliderHeight = 10
+    const sliderX = this.cameras.main.centerX
+    const sliderY = this.cameras.main.height * 0.55
+
+    // Slider background
+    this.musicVolumeBackground = this.add
+      .rectangle(sliderX, sliderY, sliderWidth, sliderHeight, 0x333333)
+      .setOrigin(0.5)
+      .setData('test-id', 'music-volume-background')
+
+    // Slider handle
+    const handlePosition = sliderX - sliderWidth / 2 + this.gameState.audio.musicVolume * sliderWidth
+    this.musicVolumeSlider = this.add
+      .rectangle(handlePosition, sliderY, 20, 20, 0x00ff00)
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true, draggable: true })
+      .setData('test-id', 'music-volume-slider')
+
+    // Volume text
+    this.musicVolumeText = this.add
+      .text(sliderX, sliderY + 20, `Volume: ${Math.round(this.gameState.audio.musicVolume * 100)}%`, smallButtonStyle)
+      .setOrigin(0.5)
+      .setData('test-id', 'music-volume-text')
+
+    // Handle slider drag
+    this.input.on('drag', (pointer: Phaser.Input.Pointer, gameObject: any, dragX: number, dragY: number) => {
+      if (gameObject === this.musicVolumeSlider) {
+        // Calculate bounds
+        const minX = sliderX - sliderWidth / 2
+        const maxX = sliderX + sliderWidth / 2
+
+        // Constrain to bounds
+        const x = Phaser.Math.Clamp(dragX, minX, maxX)
+
+        // Update slider position
+        this.musicVolumeSlider.x = x
+
+        // Calculate volume (0-1)
+        const volume = (x - minX) / sliderWidth
+
+        // Update volume
+        this.gameState.setMusicVolume(volume)
+        this.music.setVolume(volume)
+
+        // Update text
+        this.musicVolumeText.setText(`Volume: ${Math.round(volume * 100)}%`)
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
+      }
+    })
 
     // Debug overlay toggle button
     const debugText = this.gameState.debug.showOverlay ? 'Debug Overlay: ON' : 'Debug Overlay: OFF'
     this.debugButton = this.add
-      .text(this.cameras.main.centerX, this.cameras.main.height * 0.5, debugText, smallButtonStyle)
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.6, debugText, smallButtonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .setData('test-id', 'debug-button')
@@ -119,7 +216,7 @@ export default class SettingsScene extends Phaser.Scene {
 
     // Back button
     this.backButton = this.add
-      .text(this.cameras.main.centerX, this.cameras.main.height * 0.7, 'Back to Menu', smallButtonStyle)
+      .text(this.cameras.main.centerX, this.cameras.main.height * 0.75, 'Back to Menu', smallButtonStyle)
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .setData('test-id', 'back-button')
@@ -135,11 +232,20 @@ export default class SettingsScene extends Phaser.Scene {
       })
       .on('pointerdown', () => {
         this.audio.playNote('G4', '8n')
-        this.scene.start('menu')
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
+
+        // Transition back to menu with music change
+        this.music.stopTrack(true, () => {
+          this.scene.start('menu', {
+            gameState: this.gameState,
+          })
+        })
       })
 
     // Store all buttons in array for easier navigation
-    this.buttons = [this.audioButton, this.moveSoundButton, this.debugButton, this.backButton]
+    this.buttons = [this.audioButton, this.moveSoundButton, this.musicButton, this.debugButton, this.backButton]
 
     // Play intro sound
     this.audio.playSequence(['G4', 'E4', 'C4'], ['8n', '8n', '4n'], '8n')
@@ -231,17 +337,42 @@ export default class SettingsScene extends Phaser.Scene {
         // Toggle audio
         const muted = this.audio.toggleMute()
         this.audioButton.setText(muted ? 'Audio: OFF' : 'Audio: ON')
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
       } else if (this.selectedButton === 1) {
         // Toggle movement sounds
         this.gameState.player.moveSound = !this.gameState.player.moveSound
         this.moveSoundButton.setText(this.gameState.player.moveSound ? 'Movement Sounds: ON' : 'Movement Sounds: OFF')
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
       } else if (this.selectedButton === 2) {
+        // Toggle music
+        const enabled = this.music.toggleMusic()
+        this.gameState.audio.musicEnabled = enabled
+        this.musicButton.setText(enabled ? 'Music: ON' : 'Music: OFF')
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
+      } else if (this.selectedButton === 3) {
         // Toggle debug overlay
         this.gameState.debug.showOverlay = !this.gameState.debug.showOverlay
         this.debugButton.setText(this.gameState.debug.showOverlay ? 'Debug Overlay: ON' : 'Debug Overlay: OFF')
-      } else if (this.selectedButton === 3) {
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
+      } else if (this.selectedButton === 4) {
         // Back to menu
-        this.scene.start('menu')
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
+
+        // Transition back to menu with music change
+        this.music.stopTrack(true, () => {
+          this.scene.start('menu', {
+            gameState: this.gameState,
+          })
+        })
       }
     }
 
@@ -251,7 +382,16 @@ export default class SettingsScene extends Phaser.Scene {
     // Handle escape key (back to menu)
     escKey.on('down', () => {
       this.audio.playNote('G4', '8n')
-      this.scene.start('menu')
+
+      // Save state to localStorage
+      this.gameState.saveToLocalStorage()
+
+      // Transition back to menu with music change
+      this.music.stopTrack(true, () => {
+        this.scene.start('menu', {
+          gameState: this.gameState,
+        })
+      })
     })
 
     // Handle mouse movement to update focus
@@ -294,5 +434,23 @@ export default class SettingsScene extends Phaser.Scene {
 
     // Apply focus style to the button
     button.setStyle(smallButtonFocusStyle)
+  }
+
+  /**
+   * Clean up resources when scene is shut down
+   */
+  shutdown(): void {
+    // Clean up music resources
+    if (this.music) {
+      this.music.dispose()
+    }
+
+    // Clean up audio resources
+    if (this.audio) {
+      this.audio.dispose()
+    }
+
+    // Save state to localStorage
+    this.gameState.saveToLocalStorage()
   }
 }

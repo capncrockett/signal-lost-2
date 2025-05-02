@@ -1,5 +1,7 @@
 import Phaser from 'phaser'
 import { AudioManager } from '../audio'
+import { MusicManager } from '../musicManager'
+import { GameState } from '../state'
 import { buttonStyle, buttonHoverStyle, buttonFocusStyle, titleStyle } from '../utils/menuStyles'
 
 /**
@@ -7,6 +9,8 @@ import { buttonStyle, buttonHoverStyle, buttonFocusStyle, titleStyle } from '../
  */
 export default class MenuScene extends Phaser.Scene {
   private audio!: AudioManager
+  private music!: MusicManager
+  private gameState!: GameState
   private startButton!: Phaser.GameObjects.Text
   private levelSelectButton!: Phaser.GameObjects.Text
   private settingsButton!: Phaser.GameObjects.Text
@@ -19,8 +23,14 @@ export default class MenuScene extends Phaser.Scene {
   }
 
   init(): void {
+    // Get game state
+    this.gameState = window.GAME_STATE
+
     // Initialize audio
     this.audio = new AudioManager()
+
+    // Initialize music
+    this.music = new MusicManager({ gameState: this.gameState })
   }
 
   create(): void {
@@ -58,7 +68,14 @@ export default class MenuScene extends Phaser.Scene {
       })
       .on('pointerdown', () => {
         this.audio.playNote('C4', '8n')
-        this.scene.start('game', { levelId: 'start' })
+
+        // Transition music
+        this.music.stopTrack(true, () => {
+          this.scene.start('game', {
+            levelId: 'start',
+            gameState: this.gameState,
+          })
+        })
       })
 
     // Level Select button
@@ -79,7 +96,11 @@ export default class MenuScene extends Phaser.Scene {
       })
       .on('pointerdown', () => {
         this.audio.playNote('D4', '8n')
-        this.scene.start('levelSelect')
+
+        // Transition music (keep the same track for level select)
+        this.scene.start('levelSelect', {
+          gameState: this.gameState,
+        })
       })
 
     // Settings button
@@ -100,7 +121,13 @@ export default class MenuScene extends Phaser.Scene {
       })
       .on('pointerdown', () => {
         this.audio.playNote('E4', '8n')
-        this.scene.start('settings')
+
+        // Transition to settings scene with music change
+        this.music.stopTrack(true, () => {
+          this.scene.start('settings', {
+            gameState: this.gameState,
+          })
+        })
       })
 
     // Store buttons in array for easier navigation
@@ -116,14 +143,33 @@ export default class MenuScene extends Phaser.Scene {
       .setOrigin(1, 1)
       .setData('test-id', 'version-info')
 
-    // Play intro music
+    // Play intro sound effect
     this.audio.playSequence(['C4', 'E4', 'G4', 'C5'], ['8n', '8n', '8n', '4n'], '8n')
+
+    // Start background music
+    this.music.playTrack('menu')
+
+    // Save state to localStorage
+    this.gameState.saveToLocalStorage()
 
     // Set up keyboard events for audio control
     if (this.input.keyboard) {
       this.input.keyboard.on('keydown-M', () => {
+        // Toggle both sound effects and music
         const muted = this.audio.toggleMute()
+        this.gameState.audio.sfxEnabled = !muted
+
+        // Update music based on mute state
+        if (muted) {
+          this.music.setVolume(0)
+        } else {
+          this.music.setVolume(this.gameState.audio.musicVolume)
+        }
+
         console.log(`Audio ${muted ? 'muted' : 'unmuted'}`)
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
       })
     }
 
@@ -190,11 +236,25 @@ export default class MenuScene extends Phaser.Scene {
 
       // Trigger the selected button
       if (this.selectedButton === 0) {
-        this.scene.start('game', { levelId: 'start' })
+        // Transition music
+        this.music.stopTrack(true, () => {
+          this.scene.start('game', {
+            levelId: 'start',
+            gameState: this.gameState,
+          })
+        })
       } else if (this.selectedButton === 1) {
-        this.scene.start('levelSelect')
+        // Keep the same music for level select
+        this.scene.start('levelSelect', {
+          gameState: this.gameState,
+        })
       } else if (this.selectedButton === 2) {
-        this.scene.start('settings')
+        // Transition to settings scene with music change
+        this.music.stopTrack(true, () => {
+          this.scene.start('settings', {
+            gameState: this.gameState,
+          })
+        })
       }
     }
 
@@ -248,5 +308,23 @@ export default class MenuScene extends Phaser.Scene {
 
     // Apply focus style to the button
     button.setStyle(buttonFocusStyle)
+  }
+
+  /**
+   * Clean up resources when scene is shut down
+   */
+  shutdown(): void {
+    // Clean up music resources
+    if (this.music) {
+      this.music.dispose()
+    }
+
+    // Clean up audio resources
+    if (this.audio) {
+      this.audio.dispose()
+    }
+
+    // Save state to localStorage
+    this.gameState.saveToLocalStorage()
   }
 }

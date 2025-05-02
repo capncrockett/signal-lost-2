@@ -4,6 +4,7 @@ import { DebugOverlay } from '../debugOverlay'
 import { GameState } from '../state'
 import { getLevel, LevelData } from '../levels'
 import { AudioManager } from '../audio'
+import { MusicManager } from '../musicManager'
 import { PuzzleEngine } from '../puzzleEngine'
 
 export default class GameScene extends Phaser.Scene {
@@ -13,6 +14,7 @@ export default class GameScene extends Phaser.Scene {
   private currentLevel!: LevelData
   private entities: Record<string, Phaser.GameObjects.GameObject> = {}
   private audio!: AudioManager
+  private music!: MusicManager
   private puzzleEngine!: PuzzleEngine
 
   constructor() {
@@ -25,6 +27,9 @@ export default class GameScene extends Phaser.Scene {
 
     // Initialize audio
     this.audio = new AudioManager()
+
+    // Initialize music
+    this.music = new MusicManager({ gameState: this.gameState })
 
     // Initialize puzzle engine
     this.puzzleEngine = new PuzzleEngine({
@@ -63,11 +68,26 @@ export default class GameScene extends Phaser.Scene {
     // Play level start sound
     this.audio.playSequence(['C4', 'E4', 'G4'], ['8n', '8n', '8n'], '8n')
 
+    // Start background music
+    this.music.playTrack('game')
+
     // Set up keyboard events for audio control
     if (this.input && this.input.keyboard) {
       this.input.keyboard.on('keydown-M', () => {
         const muted = this.audio.toggleMute()
+        this.gameState.audio.sfxEnabled = !muted
+
+        // Update music based on mute state
+        if (muted) {
+          this.music.setVolume(0)
+        } else {
+          this.music.setVolume(this.gameState.audio.musicVolume)
+        }
+
         console.log(`Audio ${muted ? 'muted' : 'unmuted'}`)
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
       })
 
       // Set up keyboard events for player movement sounds
@@ -81,7 +101,17 @@ export default class GameScene extends Phaser.Scene {
       // Set up keyboard event for returning to menu
       this.input.keyboard.on('keydown-ESC', () => {
         this.audio.playNote('E4', '8n')
-        this.scene.start('menu')
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
+
+        // Transition back to menu with music change
+        this.music.stopTrack(true, () => {
+          this.scene.start('menu', {
+            gameState: this.gameState,
+          })
+        })
+
         console.log('Returning to menu via ESC key')
       })
     }
@@ -105,7 +135,16 @@ export default class GameScene extends Phaser.Scene {
       })
       .on('pointerdown', () => {
         this.audio.playNote('E4', '8n')
-        this.scene.start('menu')
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
+
+        // Transition back to menu with music change
+        this.music.stopTrack(true, () => {
+          this.scene.start('menu', {
+            gameState: this.gameState,
+          })
+        })
       })
 
     // Add instructions
@@ -169,6 +208,9 @@ export default class GameScene extends Phaser.Scene {
       // Play completion sound
       this.audio.playSequence(['C4', 'E4', 'G4', 'C5'], ['8n', '8n', '8n', '4n'], '8n')
 
+      // Play success music
+      this.music.playTrack('success')
+
       // Show level completion message
       // We create the text but don't need to reference it later
       const completionMessage = this.currentLevel.id === 'start' ? 'Block Puzzle Solved!' : 'Level Complete!'
@@ -230,12 +272,28 @@ export default class GameScene extends Phaser.Scene {
             nextLevelId = 'puzzle5'
           } else {
             // If no more levels, go to level select
-            this.scene.start('levelSelect')
+            // Save state to localStorage
+            this.gameState.saveToLocalStorage()
+
+            // Transition to level select with music change
+            this.music.stopTrack(true, () => {
+              this.scene.start('levelSelect', {
+                gameState: this.gameState,
+              })
+            })
             return
           }
 
-          // Start next level
-          this.scene.start('game', { levelId: nextLevelId })
+          // Save state to localStorage
+          this.gameState.saveToLocalStorage()
+
+          // Start next level with music transition
+          this.music.stopTrack(true, () => {
+            this.scene.start('game', {
+              levelId: nextLevelId,
+              gameState: this.gameState,
+            })
+          })
         })
     } catch (error) {
       console.warn('Failed to handle level completion, likely running in CI environment:', error)
@@ -256,8 +314,21 @@ export default class GameScene extends Phaser.Scene {
         nextLevelId = 'puzzle5'
       }
 
+      // Save state to localStorage
+      this.gameState.saveToLocalStorage()
+
+      // Start next level with music transition
+      try {
+        this.music.stopTrack(false)
+      } catch (error) {
+        // Ignore errors in CI
+      }
+
       // Start next level
-      this.scene.start('game', { levelId: nextLevelId })
+      this.scene.start('game', {
+        levelId: nextLevelId,
+        gameState: this.gameState,
+      })
     }
   }
 
@@ -427,5 +498,23 @@ export default class GameScene extends Phaser.Scene {
    */
   getEntityById(id: string): Phaser.GameObjects.GameObject | undefined {
     return this.entities[id]
+  }
+
+  /**
+   * Clean up resources when scene is shut down
+   */
+  shutdown(): void {
+    // Clean up music resources
+    if (this.music) {
+      this.music.dispose()
+    }
+
+    // Clean up audio resources
+    if (this.audio) {
+      this.audio.dispose()
+    }
+
+    // Save state to localStorage
+    this.gameState.saveToLocalStorage()
   }
 }

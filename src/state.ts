@@ -25,6 +25,15 @@ export class GameState {
     puzzlesSolved: 0,
   }
 
+  // Audio settings
+  audio = {
+    musicEnabled: true,
+    musicVolume: 0.7,
+    sfxEnabled: true,
+    sfxVolume: 1.0,
+    currentTrack: '',
+  }
+
   // Debug info
   debug = {
     showOverlay: true,
@@ -83,5 +92,86 @@ export class GameState {
         ...data,
       }
     }
+  }
+
+  /**
+   * Update music settings
+   */
+  updateMusicSettings(settings: Partial<typeof this.audio>): void {
+    this.audio = {
+      ...this.audio,
+      ...settings,
+    }
+  }
+
+  /**
+   * Toggle music enabled state
+   */
+  toggleMusic(): boolean {
+    this.audio.musicEnabled = !this.audio.musicEnabled
+    return this.audio.musicEnabled
+  }
+
+  /**
+   * Set music volume
+   */
+  setMusicVolume(volume: number): void {
+    // Ensure volume is between 0 and 1
+    this.audio.musicVolume = Math.max(0, Math.min(1, volume))
+  }
+
+  /**
+   * Toggle sound effects enabled state
+   */
+  toggleSfx(): boolean {
+    this.audio.sfxEnabled = !this.audio.sfxEnabled
+    return this.audio.sfxEnabled
+  }
+
+  /**
+   * Set sound effects volume
+   */
+  setSfxVolume(volume: number): void {
+    // Ensure volume is between 0 and 1
+    this.audio.sfxVolume = Math.max(0, Math.min(1, volume))
+  }
+
+  /**
+   * Save current state to localStorage
+   */
+  saveToLocalStorage(): void {
+    try {
+      // Only save necessary state (not the entire level data)
+      const savedState = {
+        audio: this.audio,
+        progress: this.progress,
+        debug: this.debug,
+      }
+      localStorage.setItem('signalLostGameState', JSON.stringify(savedState))
+    } catch (error) {
+      console.warn('Failed to save game state to localStorage:', error)
+    }
+  }
+
+  /**
+   * Load state from localStorage
+   */
+  loadFromLocalStorage(): boolean {
+    try {
+      const savedState = localStorage.getItem('signalLostGameState')
+      if (savedState) {
+        const parsedState = JSON.parse(savedState)
+
+        // Only restore specific parts of the state
+        if (parsedState.audio) this.audio = parsedState.audio
+        if (parsedState.progress) this.progress = parsedState.progress
+        if (parsedState.debug) this.debug = parsedState.debug
+
+        return true
+      }
+    } catch (error) {
+      console.warn('Failed to load game state from localStorage:', error)
+    }
+    return false
   }
 }
