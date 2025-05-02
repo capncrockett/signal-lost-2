@@ -33,7 +33,6 @@ export default class LevelSelectScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setData('test-id', 'level-select-title')
       .setData('ci-test-id', 'level-select-title')
-      .setName('level-select-title')
 
     // Create focus indicator (initially hidden)
     this.focusIndicator = this.add
@@ -42,7 +41,6 @@ export default class LevelSelectScene extends Phaser.Scene {
       .setAlpha(0)
       .setData('test-id', 'focus-indicator')
       .setData('ci-test-id', 'level-select-focus-indicator')
-      .setName('level-select-focus-indicator')
 
     // Reset buttons array
     this.levelButtons = []
@@ -65,7 +63,6 @@ export default class LevelSelectScene extends Phaser.Scene {
         .setInteractive({ useHandCursor: true })
         .setData('test-id', `level-button-${levelId}`)
         .setData('ci-test-id', `level-select-button-${levelId}`)
-        .setName(`level-select-button-${levelId}`)
         .setData('level-id', levelId)
         .on('pointerover', () => {
           if (this.selectedButton !== index) {
@@ -92,7 +89,6 @@ export default class LevelSelectScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setData('test-id', 'back-button')
       .setData('ci-test-id', 'level-select-back-button')
-      .setName('level-select-back-button')
       .on('pointerover', () => {
         if (this.selectedButton !== this.levelButtons.length) {
           this.backButton.setStyle(smallButtonHoverStyle)

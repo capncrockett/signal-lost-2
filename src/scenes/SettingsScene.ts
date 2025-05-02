@@ -39,7 +39,6 @@ export default class SettingsScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setData('test-id', 'settings-title')
       .setData('ci-test-id', 'settings-title')
-      .setName('settings-title')
 
     // Create focus indicator (initially hidden)
     this.focusIndicator = this.add
@@ -48,7 +47,6 @@ export default class SettingsScene extends Phaser.Scene {
       .setAlpha(0)
       .setData('test-id', 'focus-indicator')
       .setData('ci-test-id', 'settings-focus-indicator')
-      .setName('settings-focus-indicator')
 
     // Audio toggle button
     const audioText = this.audio.isMuted() ? 'Audio: OFF' : 'Audio: ON'
@@ -58,7 +56,6 @@ export default class SettingsScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setData('test-id', 'audio-button')
       .setData('ci-test-id', 'settings-audio-button')
-      .setName('settings-audio-button')
       .on('pointerover', () => {
         if (this.selectedButton !== 0) {
           this.audioButton.setStyle(smallButtonHoverStyle)
@@ -85,7 +82,6 @@ export default class SettingsScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setData('test-id', 'move-sound-button')
       .setData('ci-test-id', 'settings-move-sound-button')
-      .setName('settings-move-sound-button')
       .on('pointerover', () => {
         if (this.selectedButton !== 1) {
           this.moveSoundButton.setStyle(smallButtonHoverStyle)
@@ -110,7 +106,6 @@ export default class SettingsScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setData('test-id', 'debug-button')
       .setData('ci-test-id', 'settings-debug-button')
-      .setName('settings-debug-button')
       .on('pointerover', () => {
         if (this.selectedButton !== 2) {
           this.debugButton.setStyle(smallButtonHoverStyle)
@@ -134,7 +129,6 @@ export default class SettingsScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setData('test-id', 'back-button')
       .setData('ci-test-id', 'settings-back-button')
-      .setName('settings-back-button')
       .on('pointerover', () => {
         if (this.selectedButton !== 3) {
           this.backButton.setStyle(smallButtonHoverStyle)
