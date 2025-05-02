@@ -32,10 +32,10 @@ vi.mock('phaser', () => {
         add = {
           image: vi.fn().mockReturnThis(),
           text: vi.fn().mockReturnValue({
-            setVisible: vi.fn(),
-            setScrollFactor: vi.fn(),
-            setDepth: vi.fn(),
-            setText: vi.fn(),
+            setVisible: vi.fn().mockReturnThis(),
+            setScrollFactor: vi.fn().mockReturnThis(),
+            setDepth: vi.fn().mockReturnThis(),
+            setText: vi.fn().mockReturnThis(),
             setOrigin: vi.fn().mockReturnThis(),
             setInteractive: vi.fn().mockReturnThis(),
             on: vi.fn().mockReturnThis(),
