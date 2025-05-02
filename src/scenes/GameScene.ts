@@ -185,7 +185,6 @@ export default class GameScene extends Phaser.Scene {
         .setDepth(100)
 
       // TODO: Add animations or interactions with the completion text in the future
-
       // Add continue button
       const continueButton = this.add
         .text(this.cameras.main.centerX, this.cameras.main.centerY + 50, 'Continue', {
