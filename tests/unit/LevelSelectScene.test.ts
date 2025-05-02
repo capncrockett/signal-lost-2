@@ -25,6 +25,7 @@ vi.mock('phaser', () => {
             setSize: vi.fn().mockReturnThis(),
             setPosition: vi.fn().mockReturnThis(),
             setData: vi.fn().mockReturnThis(),
+            setStrokeStyle: vi.fn().mockReturnThis(),
           }),
         }
         cameras: any = {
