@@ -37,6 +37,8 @@ export const buttonFocusStyle = {
     blur: 5,
     fill: true,
   },
+  stroke: '#ffff00',
+  strokeThickness: 1,
 }
 
 // Smaller button style for level select and settings
@@ -74,6 +76,8 @@ export const smallButtonFocusStyle = {
     blur: 5,
     fill: true,
   },
+  stroke: '#ffff00',
+  strokeThickness: 1,
 }
 
 // Title style

@@ -127,6 +127,8 @@ export default class GameScene extends Phaser.Scene {
       })
       .setOrigin(1, 0)
       .setInteractive({ useHandCursor: true })
+      .setData('test-id', 'menu-button')
+      .setData('ci-test-id', 'game-menu-button')
       .on('pointerover', () => {
         menuButton.setStyle({ color: '#ffff00' })
       })
