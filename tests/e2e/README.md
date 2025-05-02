@@ -6,6 +6,10 @@ This directory contains end-to-end tests for the Signal Lost game using Playwrig
 
 - `game.spec.ts`: Tests for core game functionality (loading, controls, UI)
 - `puzzle.spec.ts`: Tests for puzzle mechanics and game state
+- `puzzleTypes.spec.ts`: Tests for basic puzzle types (blocks, switches, keys, teleporters)
+- `advancedPuzzles.spec.ts`: Tests for advanced puzzle types (pressure plates, timed doors)
+- `menuSystem.spec.ts`: Tests for menu navigation and functionality
+- `helpers.ts`: Common test utilities and helper functions
 
 ## 🚀 Running Tests
 
@@ -51,5 +55,10 @@ The E2E tests are integrated into the CI pipeline and run on every pull request.
 
 ## 🧩 Test Helpers
 
+The `helpers.ts` file provides common utilities for E2E tests:
+
 - `wait(ms)`: A helper function to wait for a specified number of milliseconds
+- `waitForGameState(page)`: Waits for the game state to be initialized
+- `navigateToGame(page)`: Navigates from the menu to the game scene
+- `setupTestLevel(page, entities)`: Sets up a test level with specific entities
 - `page.evaluate()`: Used to access the game state and trigger game events

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { wait, waitForGameState, navigateToGame } from './helpers'
 
 /**
  * Signal Lost Menu System E2E Tests
@@ -9,9 +10,6 @@ import { test, expect } from '@playwright/test'
  * - Settings menu functionality
  * - Keyboard navigation
  */
-
-// Helper function to wait for a short time
-const wait = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 test.describe('Menu System', () => {
   test('main menu displays all required buttons', async ({ page }) => {
@@ -98,9 +96,11 @@ test.describe('Menu System', () => {
 
     // Check that the game state is initialized
     const gameStateInitialized = await page.evaluate(() => {
-      return window.GAME_STATE !== undefined && 
-             window.GAME_STATE.level !== undefined && 
-             window.GAME_STATE.level.id !== undefined
+      return (
+        window.GAME_STATE !== undefined &&
+        window.GAME_STATE.level !== undefined &&
+        window.GAME_STATE.level.id !== undefined
+      )
     })
 
     expect(gameStateInitialized).toBeTruthy()
@@ -120,7 +120,7 @@ test.describe('Menu System', () => {
     // Find and click on a level button (assuming there's at least one level)
     // This might need adjustment based on the actual level names in your game
     const levelButton = page.getByText('Level 1', { exact: false })
-    
+
     // If the level button exists, click it and verify game state
     if (await levelButton.isVisible()) {
       await levelButton.click()
@@ -128,9 +128,11 @@ test.describe('Menu System', () => {
 
       // Check that the game state is initialized with the selected level
       const gameStateInitialized = await page.evaluate(() => {
-        return window.GAME_STATE !== undefined && 
-               window.GAME_STATE.level !== undefined && 
-               window.GAME_STATE.level.id !== undefined
+        return (
+          window.GAME_STATE !== undefined &&
+          window.GAME_STATE.level !== undefined &&
+          window.GAME_STATE.level.id !== undefined
+        )
       })
 
       expect(gameStateInitialized).toBeTruthy()
@@ -153,16 +155,14 @@ test.describe('Menu System', () => {
 
     // Find and click on audio toggle button (assuming there's a mute/unmute button)
     const audioButton = page.getByText('Audio:', { exact: false })
-    
+
     // If the audio button exists, click it and verify the change
     if (await audioButton.isVisible()) {
       // Get initial audio state
       const initialAudioState = await page.evaluate(() => {
         // This assumes there's a way to check audio state from the game
         // Adjust based on your actual implementation
-        return window.GAME_STATE && window.GAME_STATE.audio ? 
-               window.GAME_STATE.audio.isMuted() : 
-               false
+        return window.GAME_STATE && window.GAME_STATE.audio ? window.GAME_STATE.audio.isMuted() : false
       })
 
       // Click the audio button
@@ -171,9 +171,7 @@ test.describe('Menu System', () => {
 
       // Get new audio state
       const newAudioState = await page.evaluate(() => {
-        return window.GAME_STATE && window.GAME_STATE.audio ? 
-               window.GAME_STATE.audio.isMuted() : 
-               false
+        return window.GAME_STATE && window.GAME_STATE.audio ? window.GAME_STATE.audio.isMuted() : false
       })
 
       // The state should have toggled
@@ -192,27 +190,27 @@ test.describe('Menu System', () => {
 
     // Check initial focus (should be on Start Game)
     const startGameButton = page.getByText('Start Game', { exact: true })
-    
+
     // Press down arrow to move to Level Select
     await page.keyboard.press('ArrowDown')
     await wait(500)
-    
+
     // Press down arrow again to move to Settings
     await page.keyboard.press('ArrowDown')
     await wait(500)
-    
+
     // Press Enter to select Settings
     await page.keyboard.press('Enter')
     await wait(1000)
-    
+
     // Check that we're on the settings screen
     const settingsTitle = page.getByText('SETTINGS', { exact: true })
     await expect(settingsTitle).toBeVisible()
-    
+
     // Press Escape to go back to main menu
     await page.keyboard.press('Escape')
     await wait(1000)
-    
+
     // Check that we're back on the main menu
     const mainMenuTitle = page.getByText('SIGNAL LOST', { exact: true })
     await expect(mainMenuTitle).toBeVisible()

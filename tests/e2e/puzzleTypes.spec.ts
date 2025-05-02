@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { wait, waitForGameState, navigateToGame, setupTestLevel } from './helpers'
 
 /**
  * Signal Lost Puzzle Types E2E Tests
@@ -21,12 +22,12 @@ test.describe('Puzzle Types', () => {
     await page.evaluate(() => {
       // Initialize a test level
       window.GAME_STATE.loadLevel('test')
-      
+
       // Register a block and a target
       window.GAME_STATE.registerEntity('block_1_1', { id: 'block_1_1', type: 'block', x: 1, y: 1, active: true })
       window.GAME_STATE.registerEntity('target_3_3', { id: 'target_3_3', type: 'target', x: 3, y: 3, active: true })
     })
-    
+
     await page.waitForTimeout(500)
 
     // Verify initial state
@@ -46,31 +47,30 @@ test.describe('Puzzle Types', () => {
           const entities = window.GAME_STATE.level.entities
           const targets = Object.values(entities).filter(entity => entity.type === 'target')
           const blocks = Object.values(entities).filter(entity => entity.type === 'block')
-          
+
           // Check if all targets have blocks on them
-          const allTargetsCovered = targets.every(target => 
-            blocks.some(block => 
-              Math.round(block.x) === Math.round(target.x) && 
-              Math.round(block.y) === Math.round(target.y)
+          const allTargetsCovered = targets.every(target =>
+            blocks.some(
+              block => Math.round(block.x) === Math.round(target.x) && Math.round(block.y) === Math.round(target.y)
             )
           )
-          
+
           if (allTargetsCovered) {
             window.GAME_STATE.solveLevel()
             return true
           }
-          
+
           return false
-        }
+        },
       }
-      
+
       // Move the block to the target position
       puzzleEngine.tryMoveBlock('block_1_1', 2, 2)
-      
+
       // Check for puzzle completion
       puzzleEngine.checkBlockPuzzleCompletion()
     })
-    
+
     await page.waitForTimeout(500)
 
     // Verify the puzzle is solved
@@ -88,7 +88,7 @@ test.describe('Puzzle Types', () => {
     await page.evaluate(() => {
       // Initialize a test level
       window.GAME_STATE.loadLevel('test')
-      
+
       // Register a switch and a door
       window.GAME_STATE.registerEntity('switch_2_2', {
         id: 'switch_2_2',
@@ -98,15 +98,15 @@ test.describe('Puzzle Types', () => {
         active: true,
         activated: false,
       })
-      window.GAME_STATE.registerEntity('door_4_4', { 
-        id: 'door_4_4', 
-        type: 'door', 
-        x: 4, 
-        y: 4, 
-        active: true 
+      window.GAME_STATE.registerEntity('door_4_4', {
+        id: 'door_4_4',
+        type: 'door',
+        x: 4,
+        y: 4,
+        active: true,
       })
     })
-    
+
     await page.waitForTimeout(500)
 
     // Verify initial state
@@ -122,47 +122,48 @@ test.describe('Puzzle Types', () => {
         activateSwitch: (x, y) => {
           const entities = window.GAME_STATE.level.entities
           const switchEntity = Object.values(entities).find(
-            entity => entity.type === 'switch' && 
-            Math.round(entity.x) === Math.round(x) && 
-            Math.round(entity.y) === Math.round(y)
+            entity =>
+              entity.type === 'switch' &&
+              Math.round(entity.x) === Math.round(x) &&
+              Math.round(entity.y) === Math.round(y)
           )
-          
+
           if (!switchEntity) return false
-          
+
           // Mark the switch as activated
           window.GAME_STATE.updateEntity(switchEntity.id, { activated: true })
-          
+
           // Find and open all doors
           const doors = Object.values(entities).filter(entity => entity.type === 'door')
           doors.forEach(door => {
             window.GAME_STATE.updateEntity(door.id, { active: false })
           })
-          
+
           return true
         },
         checkSwitchPuzzleCompletion: () => {
           const entities = window.GAME_STATE.level.entities
           const switches = Object.values(entities).filter(entity => entity.type === 'switch')
-          
+
           // Check if all switches are activated
           const allSwitchesActivated = switches.every(switchEntity => switchEntity.activated === true)
-          
+
           if (allSwitchesActivated) {
             window.GAME_STATE.solveLevel()
             return true
           }
-          
+
           return false
-        }
+        },
       }
-      
+
       // Activate the switch
       puzzleEngine.activateSwitch(2, 2)
-      
+
       // Check for puzzle completion
       puzzleEngine.checkSwitchPuzzleCompletion()
     })
-    
+
     await page.waitForTimeout(500)
 
     // Verify the door is deactivated (opened)
@@ -170,7 +171,7 @@ test.describe('Puzzle Types', () => {
       return window.GAME_STATE.level.entities['door_4_4'].active
     })
     expect(finalDoorActive).toBe(false)
-    
+
     // Verify the puzzle is solved
     const finalSolved = await page.evaluate(() => window.GAME_STATE.level.solved)
     expect(finalSolved).toBe(true)
@@ -186,14 +187,14 @@ test.describe('Puzzle Types', () => {
     await page.evaluate(() => {
       // Initialize a test level
       window.GAME_STATE.loadLevel('test')
-      
+
       // Register a key and a locked door
-      window.GAME_STATE.registerEntity('key_5_5', { 
-        id: 'key_5_5', 
-        type: 'key', 
-        x: 5, 
-        y: 5, 
-        active: true 
+      window.GAME_STATE.registerEntity('key_5_5', {
+        id: 'key_5_5',
+        type: 'key',
+        x: 5,
+        y: 5,
+        active: true,
       })
       window.GAME_STATE.registerEntity('locked_door_6_6', {
         id: 'locked_door_6_6',
@@ -203,7 +204,7 @@ test.describe('Puzzle Types', () => {
         active: true,
       })
     })
-    
+
     await page.waitForTimeout(500)
 
     // Verify initial state
@@ -219,42 +220,42 @@ test.describe('Puzzle Types', () => {
         collectKey: (x, y) => {
           const entities = window.GAME_STATE.level.entities
           const keyEntity = Object.values(entities).find(
-            entity => entity.type === 'key' && 
-            Math.round(entity.x) === Math.round(x) && 
-            Math.round(entity.y) === Math.round(y)
+            entity =>
+              entity.type === 'key' && Math.round(entity.x) === Math.round(x) && Math.round(entity.y) === Math.round(y)
           )
-          
+
           if (!keyEntity) return false
-          
+
           // Add the key to inventory
           window.GAME_STATE.addToInventory(keyEntity.id)
-          
+
           // Mark the key as collected (inactive)
           window.GAME_STATE.updateEntity(keyEntity.id, { active: false })
-          
+
           return true
         },
         tryUnlockDoor: (x, y) => {
           const entities = window.GAME_STATE.level.entities
           const doorEntity = Object.values(entities).find(
-            entity => entity.type === 'locked_door' && 
-            Math.round(entity.x) === Math.round(x) && 
-            Math.round(entity.y) === Math.round(y)
+            entity =>
+              entity.type === 'locked_door' &&
+              Math.round(entity.x) === Math.round(x) &&
+              Math.round(entity.y) === Math.round(y)
           )
-          
+
           if (!doorEntity) return false
-          
+
           // Check if player has a key
           if (window.GAME_STATE.player.inventory.length === 0) {
             return false
           }
-          
+
           // Use a key to unlock the door
           window.GAME_STATE.player.inventory.splice(0, 1)
-          
+
           // Mark the door as unlocked (inactive)
           window.GAME_STATE.updateEntity(doorEntity.id, { active: false })
-          
+
           return true
         },
         checkKeyPuzzleCompletion: () => {
@@ -262,27 +263,27 @@ test.describe('Puzzle Types', () => {
           const lockedDoors = Object.values(entities).filter(
             entity => entity.type === 'locked_door' && entity.active !== false
           )
-          
+
           // If there are no locked doors left, this puzzle type is complete
           if (lockedDoors.length === 0) {
             window.GAME_STATE.solveLevel()
             return true
           }
-          
+
           return false
-        }
+        },
       }
-      
+
       // Collect the key
       puzzleEngine.collectKey(5, 5)
-      
+
       // Unlock the door
       puzzleEngine.tryUnlockDoor(6, 6)
-      
+
       // Check for puzzle completion
       puzzleEngine.checkKeyPuzzleCompletion()
     })
-    
+
     await page.waitForTimeout(500)
 
     // Verify the door is unlocked
@@ -290,7 +291,7 @@ test.describe('Puzzle Types', () => {
       return window.GAME_STATE.level.entities['locked_door_6_6'].active
     })
     expect(finalDoorActive).toBe(false)
-    
+
     // Verify the puzzle is solved
     const finalSolved = await page.evaluate(() => window.GAME_STATE.level.solved)
     expect(finalSolved).toBe(true)
@@ -306,27 +307,27 @@ test.describe('Puzzle Types', () => {
     await page.evaluate(() => {
       // Initialize a test level
       window.GAME_STATE.loadLevel('test')
-      
+
       // Register two teleporters
-      window.GAME_STATE.registerEntity('teleporter_7_7', { 
-        id: 'teleporter_7_7', 
-        type: 'teleporter', 
-        x: 7, 
-        y: 7, 
-        active: true 
+      window.GAME_STATE.registerEntity('teleporter_7_7', {
+        id: 'teleporter_7_7',
+        type: 'teleporter',
+        x: 7,
+        y: 7,
+        active: true,
       })
-      window.GAME_STATE.registerEntity('teleporter_8_8', { 
-        id: 'teleporter_8_8', 
-        type: 'teleporter', 
-        x: 8, 
-        y: 8, 
-        active: true 
+      window.GAME_STATE.registerEntity('teleporter_8_8', {
+        id: 'teleporter_8_8',
+        type: 'teleporter',
+        x: 8,
+        y: 8,
+        active: true,
       })
-      
+
       // Set player position
       window.GAME_STATE.updatePlayerPosition(7, 7)
     })
-    
+
     await page.waitForTimeout(500)
 
     // Verify initial player position
@@ -342,46 +343,45 @@ test.describe('Puzzle Types', () => {
         useTeleporter: (x, y) => {
           const entities = window.GAME_STATE.level.entities
           const teleporterEntity = Object.values(entities).find(
-            entity => entity.type === 'teleporter' && 
-            Math.round(entity.x) === Math.round(x) && 
-            Math.round(entity.y) === Math.round(y)
+            entity =>
+              entity.type === 'teleporter' &&
+              Math.round(entity.x) === Math.round(x) &&
+              Math.round(entity.y) === Math.round(y)
           )
-          
+
           if (!teleporterEntity) {
             return { success: false }
           }
-          
+
           // Find other teleporters
           const otherTeleporters = Object.values(entities).filter(
-            entity => entity.type === 'teleporter' && 
-            entity.id !== teleporterEntity.id &&
-            entity.active !== false
+            entity => entity.type === 'teleporter' && entity.id !== teleporterEntity.id && entity.active !== false
           )
-          
+
           if (otherTeleporters.length === 0) {
             return { success: false }
           }
-          
+
           // Choose the first other teleporter
           const targetTeleporter = otherTeleporters[0]
-          
+
           return {
             success: true,
             newX: targetTeleporter.x,
             newY: targetTeleporter.y,
           }
-        }
+        },
       }
-      
+
       // Use the teleporter
       const result = puzzleEngine.useTeleporter(7, 7)
-      
+
       // Teleport the player if successful
       if (result.success && result.newX !== undefined && result.newY !== undefined) {
         window.GAME_STATE.updatePlayerPosition(result.newX, result.newY)
       }
     })
-    
+
     await page.waitForTimeout(500)
 
     // Verify the player has been teleported
