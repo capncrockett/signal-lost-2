@@ -50,17 +50,14 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        # Always install browsers to ensure they're available
+        # This is more reliable than caching
 
       - name: Run E2E tests (Playwright)
         run: npm run test:e2e:ci
         env:
           # Set CI environment variable to enable CI-specific optimizations
           CI: true
-          # Set additional environment variables for better performance
-          PLAYWRIGHT_BROWSERS_PATH: ~/.cache/ms-playwright
-          # Disable Playwright's own browser download
-          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1
           # Increase Node.js memory limit for better performance
           NODE_OPTIONS: --max-old-space-size=4096
 
