@@ -53,11 +53,18 @@ export default class SettingsScene extends Phaser.Scene {
 
     // Create focus indicator (initially hidden)
     this.focusIndicator = this.add
-      .rectangle(0, 0, 200, 40, 0x333333)
+      .rectangle(0, 0, 200, 40, 0x444444)
       .setOrigin(0.5)
       .setAlpha(0)
       .setData('test-id', 'focus-indicator')
       .setData('ci-test-id', 'settings-focus-indicator')
+
+    // Add stroke style if available (might not be in test environment)
+    try {
+      this.focusIndicator.setStrokeStyle(2, 0xffff00)
+    } catch (error) {
+      console.warn('Could not set stroke style, likely running in test environment')
+    }
 
     // Audio toggle button
     const audioText = this.audio.isMuted() ? 'Audio: OFF' : 'Audio: ON'
@@ -435,6 +442,20 @@ export default class SettingsScene extends Phaser.Scene {
     // Make sure it's visible and behind the text
     this.focusIndicator.setAlpha(1)
     this.focusIndicator.setDepth(button.depth - 1)
+
+    // Add a pulsing animation to make the focus indicator more visible
+    try {
+      this.tweens.add({
+        targets: this.focusIndicator,
+        alpha: { from: 0.7, to: 1 },
+        duration: 700,
+        ease: 'Sine.easeInOut',
+        yoyo: true,
+        repeat: -1,
+      })
+    } catch (error) {
+      console.warn('Could not add tween, likely running in test environment')
+    }
 
     // Apply focus style to the button
     button.setStyle(smallButtonFocusStyle)

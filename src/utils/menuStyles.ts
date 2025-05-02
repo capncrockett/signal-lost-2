@@ -30,6 +30,9 @@ export const buttonFocusStyle = {
   align: 'center',
   padding: { x: 16, y: 8 },
   backgroundColor: '#333333',
+  shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true },
+  stroke: '#ffff00',
+  strokeThickness: 1,
 }
 
 // Smaller button style for level select and settings
@@ -60,6 +63,9 @@ export const smallButtonFocusStyle = {
   align: 'center',
   padding: { x: 12, y: 6 },
   backgroundColor: '#333333',
+  shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 4, fill: true },
+  stroke: '#ffff00',
+  strokeThickness: 1,
 }
 
 // Title style
