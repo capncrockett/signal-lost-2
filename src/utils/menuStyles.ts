@@ -35,8 +35,8 @@ export const buttonFocusStyle = {
     offsetY: 2,
     color: '#000000',
     blur: 5,
-    fill: true
-  }
+    fill: true,
+  },
 }
 
 // Smaller button style for level select and settings
@@ -72,8 +72,8 @@ export const smallButtonFocusStyle = {
     offsetY: 2,
     color: '#000000',
     blur: 5,
-    fill: true
-  }
+    fill: true,
+  },
 }
 
 // Title style
