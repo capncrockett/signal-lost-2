@@ -94,17 +94,18 @@ test.describe('Signal Lost Game', () => {
     expect(logs.some(log => log.includes('Movement sounds disabled'))).toBeTruthy()
   })
 
-  // Skip this test for now as the player movement detection is unreliable in CI
+  // Skip this test for now as the debug overlay text detection is unreliable
   test.skip('player can move with arrow keys', async ({ page }) => {
     await page.goto('/')
 
     // Wait for the game to initialize
     await wait(1000)
 
-    // Get initial player position from game state
-    const initialPosition = await page.evaluate(() => {
-      return { x: window.GAME_STATE.player.x, y: window.GAME_STATE.player.y }
-    })
+    // Get initial player position from debug overlay
+    const initialPositionText = await page
+      .locator('text')
+      .filter({ hasText: /Position:/ })
+      .textContent()
 
     // Press arrow keys to move the player
     await page.keyboard.press('ArrowRight')
@@ -112,14 +113,14 @@ test.describe('Signal Lost Game', () => {
     await page.keyboard.press('ArrowDown')
     await wait(500)
 
-    // Get new player position from game state
-    const newPosition = await page.evaluate(() => {
-      return { x: window.GAME_STATE.player.x, y: window.GAME_STATE.player.y }
-    })
+    // Get new player position from debug overlay
+    const newPositionText = await page
+      .locator('text')
+      .filter({ hasText: /Position:/ })
+      .textContent()
 
     // Verify that the position has changed
-    // In CI environment, the player might not move as expected, so we'll check if either x or y has changed
-    expect(newPosition.x !== initialPosition.x || newPosition.y !== initialPosition.y).toBe(true)
+    expect(initialPositionText).not.toEqual(newPositionText)
   })
 
   test('game state is accessible via window.GAME_STATE', async ({ page }) => {
