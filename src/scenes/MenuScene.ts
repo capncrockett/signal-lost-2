@@ -42,6 +42,7 @@ export default class MenuScene extends Phaser.Scene {
       .text(this.cameras.main.centerX, this.cameras.main.height * 0.2, 'SIGNAL LOST', titleStyle)
       .setOrigin(0.5)
       .setData('test-id', 'title')
+      .setData('ci-test-id', 'menu-title')
 
     // Create focus indicator (initially hidden)
     this.focusIndicator = this.add
@@ -49,6 +50,7 @@ export default class MenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setAlpha(0)
       .setData('test-id', 'focus-indicator')
+      .setData('ci-test-id', 'menu-focus-indicator')
 
     // Start Game button
     this.startButton = this.add
@@ -56,6 +58,7 @@ export default class MenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .setData('test-id', 'start-button')
+      .setData('ci-test-id', 'menu-start-button')
       .on('pointerover', () => {
         if (this.selectedButton !== 0) {
           this.startButton.setStyle(buttonHoverStyle)
@@ -84,6 +87,7 @@ export default class MenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .setData('test-id', 'level-select-button')
+      .setData('ci-test-id', 'menu-level-select-button')
       .on('pointerover', () => {
         if (this.selectedButton !== 1) {
           this.levelSelectButton.setStyle(buttonHoverStyle)
@@ -109,6 +113,7 @@ export default class MenuScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true })
       .setData('test-id', 'settings-button')
+      .setData('ci-test-id', 'menu-settings-button')
       .on('pointerover', () => {
         if (this.selectedButton !== 2) {
           this.settingsButton.setStyle(buttonHoverStyle)
@@ -142,6 +147,7 @@ export default class MenuScene extends Phaser.Scene {
       })
       .setOrigin(1, 1)
       .setData('test-id', 'version-info')
+      .setData('ci-test-id', 'menu-version-info')
 
     // Play intro sound effect
     this.audio.playSequence(['C4', 'E4', 'G4', 'C5'], ['8n', '8n', '8n', '4n'], '8n')

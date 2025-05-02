@@ -1,6 +1,6 @@
 /**
  * Signal Lost E2E Test Helpers
- * 
+ *
  * Common helper functions for E2E tests to reduce duplication and improve performance.
  */
 
@@ -62,62 +62,96 @@ export const navigateToScene = async (page: Page, sceneKey: string, data?: any):
               moveSound: true,
             }
             window.GAME_STATE.currentScene = 'game'
-            
+
             // Try to start the scene if possible
             try {
               const game = document.querySelector('canvas')?.parentElement?.__PHASER_GAME__
               if (game && game.scene && game.scene.start) {
                 game.scene.start(sceneKey, data)
+                console.log('Started game scene via Phaser API')
               }
             } catch (e) {
-              console.log('Could not start scene via Phaser, using game state only')
+              console.log('Could not start scene via Phaser, using game state only:', e)
             }
-            
+
             return true
           }
 
           if (sceneKey === 'menu') {
             window.GAME_STATE.currentScene = 'menu'
-            
+
             try {
               const game = document.querySelector('canvas')?.parentElement?.__PHASER_GAME__
               if (game && game.scene && game.scene.start) {
                 game.scene.start(sceneKey)
+                console.log('Started menu scene via Phaser API')
+
+                // Verify menu elements are created (CI-specific)
+                setTimeout(() => {
+                  const menuElements = document.querySelectorAll('[data-ci-test-id^="menu-"]');
+                  console.log(`Found ${menuElements.length} menu elements with ci-test-id`);
+
+                  menuElements.forEach(el => {
+                    console.log(`Menu element: ${el.getAttribute('data-ci-test-id')}`);
+                  });
+                }, 500);
               }
             } catch (e) {
-              console.log('Could not start scene via Phaser, using game state only')
+              console.log('Could not start scene via Phaser, using game state only:', e)
             }
-            
+
             return true
           }
 
           if (sceneKey === 'levelSelect') {
             window.GAME_STATE.currentScene = 'levelSelect'
-            
+
             try {
               const game = document.querySelector('canvas')?.parentElement?.__PHASER_GAME__
               if (game && game.scene && game.scene.start) {
                 game.scene.start(sceneKey)
+                console.log('Started levelSelect scene via Phaser API')
+
+                // Verify level select elements are created (CI-specific)
+                setTimeout(() => {
+                  const levelSelectElements = document.querySelectorAll('[data-ci-test-id^="level-select-"]');
+                  console.log(`Found ${levelSelectElements.length} level select elements with ci-test-id`);
+
+                  levelSelectElements.forEach(el => {
+                    console.log(`Level select element: ${el.getAttribute('data-ci-test-id')}`);
+                  });
+                }, 500);
               }
             } catch (e) {
-              console.log('Could not start scene via Phaser, using game state only')
+              console.log('Could not start scene via Phaser, using game state only:', e)
             }
-            
+
             return true
           }
 
           if (sceneKey === 'settings') {
             window.GAME_STATE.currentScene = 'settings'
-            
+
             try {
               const game = document.querySelector('canvas')?.parentElement?.__PHASER_GAME__
               if (game && game.scene && game.scene.start) {
                 game.scene.start(sceneKey)
+                console.log('Started settings scene via Phaser API')
+
+                // Verify settings elements are created (CI-specific)
+                setTimeout(() => {
+                  const settingsElements = document.querySelectorAll('[data-ci-test-id^="settings-"]');
+                  console.log(`Found ${settingsElements.length} settings elements with ci-test-id`);
+
+                  settingsElements.forEach(el => {
+                    console.log(`Settings element: ${el.getAttribute('data-ci-test-id')}`);
+                  });
+                }, 500);
               }
             } catch (e) {
-              console.log('Could not start scene via Phaser, using game state only')
+              console.log('Could not start scene via Phaser, using game state only:', e)
             }
-            
+
             return true
           }
         }
@@ -136,7 +170,7 @@ export const navigateToScene = async (page: Page, sceneKey: string, data?: any):
 export const navigateToGame = async (page: Page): Promise<void> => {
   // Use the more reliable direct navigation
   await navigateToScene(page, 'game', { levelId: 'start' })
-  
+
   // Short wait for the scene to initialize
   await wait(1000)
 }
@@ -146,7 +180,40 @@ export const verifyScene = async (page: Page, sceneKey: string): Promise<boolean
   return await page.evaluate((expectedScene) => {
     // Check using game state (more reliable in CI)
     try {
-      return window.GAME_STATE && window.GAME_STATE.currentScene === expectedScene
+      // First check game state
+      const gameStateCheck = window.GAME_STATE && window.GAME_STATE.currentScene === expectedScene;
+
+      // For menu scenes, also verify scene-specific elements are present
+      if (expectedScene === 'menu') {
+        // Check for menu-specific elements using the ci-test-id attribute
+        const menuElements = document.querySelectorAll('[data-ci-test-id^="menu-"]');
+        console.log(`Found ${menuElements.length} menu elements with ci-test-id`);
+
+        // If we have menu elements, we're definitely in the menu scene
+        if (menuElements.length > 0) {
+          return true;
+        }
+      } else if (expectedScene === 'levelSelect') {
+        // Check for level select-specific elements using the ci-test-id attribute
+        const levelSelectElements = document.querySelectorAll('[data-ci-test-id^="level-select-"]');
+        console.log(`Found ${levelSelectElements.length} level select elements with ci-test-id`);
+
+        // If we have level select elements, we're definitely in the level select scene
+        if (levelSelectElements.length > 0) {
+          return true;
+        }
+      } else if (expectedScene === 'settings') {
+        // Check for settings-specific elements using the ci-test-id attribute
+        const settingsElements = document.querySelectorAll('[data-ci-test-id^="settings-"]');
+        console.log(`Found ${settingsElements.length} settings elements with ci-test-id`);
+
+        // If we have settings elements, we're definitely in the settings scene
+        if (settingsElements.length > 0) {
+          return true;
+        }
+      }
+
+      return gameStateCheck;
     } catch (error) {
       console.error(`Error checking scene using game state:`, error)
       return false
@@ -161,10 +228,10 @@ export const setupTestLevel = async (page: Page, levelId: string, entities: Reco
       if (!window.GAME_STATE) {
         return false
       }
-      
+
       // Set the level ID
       window.GAME_STATE.level.id = levelId
-      
+
       // Register entities
       for (const [id, entity] of Object.entries(entities)) {
         window.GAME_STATE.level.entities[id] = {
@@ -172,7 +239,7 @@ export const setupTestLevel = async (page: Page, levelId: string, entities: Reco
           ...entity
         }
       }
-      
+
       return true
     } catch (error) {
       console.error('Error setting up test level:', error)
