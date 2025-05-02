@@ -15,14 +15,12 @@ export default class SettingsScene extends Phaser.Scene {
   private moveSoundButton!: Phaser.GameObjects.Text
   private musicButton!: Phaser.GameObjects.Text
   private musicVolumeSlider!: Phaser.GameObjects.Rectangle
-  private musicVolumeBackground!: Phaser.GameObjects.Rectangle
   private musicVolumeText!: Phaser.GameObjects.Text
   private debugButton!: Phaser.GameObjects.Text
   private backButton!: Phaser.GameObjects.Text
   private focusIndicator!: Phaser.GameObjects.Rectangle
   private selectedButton = 0
   private buttons: Phaser.GameObjects.Text[] = []
-  private isDraggingSlider = false
 
   constructor() {
     super({ key: 'settings', active: false, visible: false })
@@ -144,7 +142,7 @@ export default class SettingsScene extends Phaser.Scene {
     const sliderY = this.cameras.main.height * 0.55
 
     // Slider background
-    this.musicVolumeBackground = this.add
+    this.add
       .rectangle(sliderX, sliderY, sliderWidth, sliderHeight, 0x333333)
       .setOrigin(0.5)
       .setData('test-id', 'music-volume-background')
@@ -164,7 +162,7 @@ export default class SettingsScene extends Phaser.Scene {
       .setData('test-id', 'music-volume-text')
 
     // Handle slider drag
-    this.input.on('drag', (pointer: Phaser.Input.Pointer, gameObject: any, dragX: number, dragY: number) => {
+    this.input.on('drag', (_pointer: Phaser.Input.Pointer, gameObject: any, dragX: number, _dragY: number) => {
       if (gameObject === this.musicVolumeSlider) {
         // Calculate bounds
         const minX = sliderX - sliderWidth / 2

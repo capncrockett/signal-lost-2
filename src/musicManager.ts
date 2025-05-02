@@ -25,13 +25,18 @@ export interface TrackDefinition {
   }[]
 }
 
+// Define custom types for Tone.js to fix TypeScript errors
+type ToneInstrument = Tone.Synth | Tone.AMSynth | Tone.FMSynth | Tone.MembraneSynth
+type ToneEffect = Tone.Reverb | Tone.FeedbackDelay | Tone.Distortion | Tone.Chorus
+type ToneSequence = Tone.Sequence<string> & { index: number }
+
 export class MusicManager {
   private gameState: GameState
   private currentTrack: string = ''
   private isPlaying: boolean = false
-  private instruments: Tone.Instrument[] = []
-  private effects: Tone.Effect[] = []
-  private sequences: Tone.Sequence[] = []
+  private instruments: ToneInstrument[] = []
+  private effects: ToneEffect[] = []
+  private sequences: ToneSequence[] = []
   private tracks: Record<string, TrackDefinition> = {}
   private fadeInterval: number | null = null
   private currentVolume: number = 0
@@ -187,7 +192,7 @@ export class MusicManager {
 
       // Create instruments
       track.instruments.forEach(instrumentDef => {
-        let instrument: Tone.Instrument
+        let instrument: ToneInstrument
 
         switch (instrumentDef.type) {
           case 'synth':
@@ -214,7 +219,7 @@ export class MusicManager {
       // Create effects
       if (track.effects) {
         track.effects.forEach(effectDef => {
-          let effect: Tone.Effect
+          let effect: ToneEffect
 
           switch (effectDef.type) {
             case 'reverb':
@@ -261,13 +266,13 @@ export class MusicManager {
             (time, note) => {
               instrument.triggerAttackRelease(
                 note,
-                track.durations[index][sequence.index % track.durations[index].length],
+                track.durations[index][(sequence as ToneSequence).index % track.durations[index].length],
                 time
               )
             },
             track.notes[index],
             '4n'
-          )
+          ) as ToneSequence
 
           sequence.loop = true
           sequence.start(0)

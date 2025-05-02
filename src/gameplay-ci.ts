@@ -237,7 +237,6 @@ export class AudioManagerCI {
  */
 export class MusicManagerCI {
   private currentTrack = ''
-  private isPlaying = false
 
   /**
    * Play a specific music track
@@ -245,7 +244,6 @@ export class MusicManagerCI {
   playTrack(trackKey: string): void {
     console.log('Playing music track:', trackKey)
     this.currentTrack = trackKey
-    this.isPlaying = true
   }
 
   /**
@@ -254,7 +252,6 @@ export class MusicManagerCI {
   stopTrack(fadeOut: boolean = true, callback?: () => void): void {
     console.log('Stopping music track:', this.currentTrack, 'with fade out:', fadeOut)
     this.currentTrack = ''
-    this.isPlaying = false
     if (callback) callback()
   }
 
