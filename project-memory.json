@@ -9,7 +9,9 @@
     "architecture": "modular",
     "tests": "required for all core modules",
     "audio": "Tone.js only for POC/MVP",
-    "graphics": "ASCII maps -> tile sprites"
+    "graphics": "ASCII maps -> tile sprites",
+    "typescript": "use custom type definitions for external libraries when needed, avoid trivially inferred type annotations",
+    "eslint": "follow project ESLint rules, prefix unused parameters with underscore"
   },
   "agent_roles": {
     "alpha": "feature dev & unit tests",
@@ -30,7 +32,10 @@
     "run all unit + E2E tests",
     "run lint & format checks",
     "update docs with any public API changes",
-    "always branch from develop, never from main"
+    "always branch from develop, never from main",
+    "create custom type definitions for external libraries when needed",
+    "prefix unused variables and parameters with underscore",
+    "avoid trivially inferred type annotations"
   ],
   "donot": [
     "over-engineer UI systems",
@@ -39,6 +44,9 @@
     "merge without green CI",
     "push directly to main",
     "push directly to develop branch",
-    "create feature branches from main"
+    "create feature branches from main",
+    "use direct type references to external libraries without custom type definitions",
+    "leave unused variables or parameters without underscore prefix",
+    "use trivially inferred type annotations"
   ]
 }
