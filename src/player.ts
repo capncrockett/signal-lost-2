@@ -132,6 +132,16 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
     // Update game state with player position
     this.gameState.updatePlayerPosition(this.x, this.y)
+
+    // Check for pressure plates under the player
+    if (this.puzzleEngine) {
+      const gridX = Math.round(this.x / 32)
+      const gridY = Math.round(this.y / 32)
+
+      if (this.puzzleEngine.isPressurePlateAt(gridX, gridY)) {
+        this.puzzleEngine.activatePressurePlate(gridX, gridY)
+      }
+    }
   }
 
   /**
@@ -184,6 +194,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // Check for switches
     if (this.puzzleEngine.isSwitchAt(x, y)) {
       interactionOccurred = this.puzzleEngine.activateSwitch(x, y)
+    }
+
+    // Check for pressure plates
+    if (this.puzzleEngine.isPressurePlateAt(x, y)) {
+      interactionOccurred = this.puzzleEngine.activatePressurePlate(x, y)
     }
 
     // Play interaction sound if any interaction occurred

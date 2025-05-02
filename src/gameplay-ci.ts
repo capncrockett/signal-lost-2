@@ -119,6 +119,34 @@ export class PuzzleEngineCI {
   }
 
   /**
+   * Check if a pressure plate is at the given position
+   */
+  isPressurePlateAt(_x: number, _y: number): boolean {
+    return false
+  }
+
+  /**
+   * Activate a pressure plate
+   */
+  activatePressurePlate(_x: number, _y: number): boolean {
+    return true
+  }
+
+  /**
+   * Deactivate a pressure plate
+   */
+  deactivatePressurePlate(_x: number, _y: number): boolean {
+    return true
+  }
+
+  /**
+   * Check if a timed door is at the given position
+   */
+  isTimedDoorAt(_x: number, _y: number): boolean {
+    return false
+  }
+
+  /**
    * Check if a switch is at the given position
    */
   isSwitchAt(_x: number, _y: number): boolean {
@@ -129,6 +157,13 @@ export class PuzzleEngineCI {
    * Activate a switch
    */
   activateSwitch(_x: number, _y: number): boolean {
+    return true
+  }
+
+  /**
+   * Check if all pressure plates are activated
+   */
+  checkPressurePlatePuzzleCompletion(): boolean {
     return true
   }
 

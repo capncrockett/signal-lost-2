@@ -22,6 +22,8 @@ const TILE_MAPPING = {
   S: 'switch',
   T: 'teleporter',
   L: 'locked_door',
+  O: 'pressure_plate', // Pressure plate (looks like a circle)
+  M: 'timed_door', // Timed door (M for "momentary")
   ' ': null, // empty space
 }
 
@@ -299,6 +301,77 @@ export const LEVELS: Record<string, LevelData> = {
     #.#####.....#
     #.....#.....#
     #..T..#.....#
+    #.....#.....#
+    #############
+    `
+  ),
+
+  // New puzzle types - Pressure plates and timed doors
+
+  pressure1: parseAsciiMap(
+    'pressure1',
+    'Pressure Plate Basics',
+    `
+    ###########
+    #.........#
+    #...O.....#
+    #....P....#
+    #.........#
+    #.....M...#
+    ###########
+    `
+  ),
+
+  pressure2: parseAsciiMap(
+    'pressure2',
+    'Block on Plate',
+    `
+    ###########
+    #.........#
+    #...B.....#
+    #....P....#
+    #.........#
+    #.....O...#
+    #.....M...#
+    ###########
+    `
+  ),
+
+  timed1: parseAsciiMap(
+    'timed1',
+    'Timed Run',
+    `
+    #############
+    #.....#.....#
+    #..O..#.....#
+    #.....#.....#
+    #.#####.....#
+    #.....#.....#
+    #..P..#..M..#
+    #.....#.....#
+    #.#####.....#
+    #.....#.....#
+    #.....#..X..#
+    #.....#.....#
+    #############
+    `
+  ),
+
+  combined1: parseAsciiMap(
+    'combined1',
+    'Combined Puzzle Challenge',
+    `
+    #############
+    #.....#.....#
+    #..O..#..B..#
+    #.....#.....#
+    #.#####..M..#
+    #.....#.....#
+    #..P..#..X..#
+    #.....#.....#
+    #.#####.....#
+    #.....#.....#
+    #..K..#..L..#
     #.....#.....#
     #############
     `
