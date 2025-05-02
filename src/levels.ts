@@ -73,14 +73,14 @@ export function getLevel(id: string): LevelData {
 export const LEVELS: Record<string, LevelData> = {
   start: parseAsciiMap(
     'start',
-    'Starting Room',
+    'Push the Block',
     `
     ###########
     #.........#
-    #.........#
+    #...B.....#
     #....P....#
     #.........#
-    #.........#
+    #.....X...#
     ###########
     `
   ),
