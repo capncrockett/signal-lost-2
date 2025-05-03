@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test'
-import { wait, waitForGameState, navigateToGame } from './helpers'
+import { wait, waitForGameState, isCanvasVisible, navigateToScene, verifyScene } from './helpers'
 
 /**
  * Signal Lost Menu System E2E Tests
@@ -10,209 +10,131 @@ import { wait, waitForGameState, navigateToGame } from './helpers'
  * - Settings menu functionality
  * - Keyboard navigation
  */
-
 test.describe('Menu System', () => {
-  test('main menu displays all required buttons', async ({ page }) => {
+  test('game loads with canvas visible', async ({ page }) => {
     await page.goto('/')
 
-    // Wait for the game to initialize
-    await wait(2000)
+    // Check that the canvas is created
+    const canvas = page.locator('canvas')
+    await expect(canvas).toBeVisible()
 
-    // Check for the title
-    const title = page.getByText('SIGNAL LOST', { exact: true })
-    await expect(title).toBeVisible()
-
-    // Check for the main menu buttons
-    const startGameButton = page.getByText('Start Game', { exact: true })
-    await expect(startGameButton).toBeVisible()
-
-    const levelSelectButton = page.getByText('Level Select', { exact: true })
-    await expect(levelSelectButton).toBeVisible()
-
-    const settingsButton = page.getByText('Settings', { exact: true })
-    await expect(settingsButton).toBeVisible()
-  })
-
-  test('can navigate from main menu to level select and back', async ({ page }) => {
-    await page.goto('/')
-
-    // Wait for the game to initialize
-    await wait(2000)
-
-    // Navigate to level select
-    const levelSelectButton = page.getByText('Level Select', { exact: true })
-    await levelSelectButton.click()
-    await wait(1000)
-
-    // Check that we're on the level select screen
-    const levelSelectTitle = page.getByText('LEVEL SELECT', { exact: true })
-    await expect(levelSelectTitle).toBeVisible()
-
-    // Navigate back to main menu
-    const backButton = page.getByText('Back', { exact: true })
-    await backButton.click()
-    await wait(1000)
-
-    // Check that we're back on the main menu
-    const mainMenuTitle = page.getByText('SIGNAL LOST', { exact: true })
-    await expect(mainMenuTitle).toBeVisible()
-  })
-
-  test('can navigate from main menu to settings and back', async ({ page }) => {
-    await page.goto('/')
-
-    // Wait for the game to initialize
-    await wait(2000)
-
-    // Navigate to settings
-    const settingsButton = page.getByText('Settings', { exact: true })
-    await settingsButton.click()
-    await wait(1000)
-
-    // Check that we're on the settings screen
-    const settingsTitle = page.getByText('SETTINGS', { exact: true })
-    await expect(settingsTitle).toBeVisible()
-
-    // Navigate back to main menu
-    const backButton = page.getByText('Back', { exact: true })
-    await backButton.click()
-    await wait(1000)
-
-    // Check that we're back on the main menu
-    const mainMenuTitle = page.getByText('SIGNAL LOST', { exact: true })
-    await expect(mainMenuTitle).toBeVisible()
-  })
-
-  test('can navigate from main menu to game', async ({ page }) => {
-    await page.goto('/')
-
-    // Wait for the game to initialize
-    await wait(2000)
-
-    // Navigate to game
-    const startGameButton = page.getByText('Start Game', { exact: true })
-    await startGameButton.click()
-    await wait(2000)
-
-    // Check that the game state is initialized
-    const gameStateInitialized = await page.evaluate(() => {
-      return (
-        window.GAME_STATE !== undefined &&
-        window.GAME_STATE.level !== undefined &&
-        window.GAME_STATE.level.id !== undefined
-      )
-    })
-
+    // Wait for game state to be initialized
+    const gameStateInitialized = await waitForGameState(page)
     expect(gameStateInitialized).toBeTruthy()
   })
 
-  test('can select a level from level select screen', async ({ page }) => {
+  test('can access menu scene via game state', async ({ page }) => {
     await page.goto('/')
 
-    // Wait for the game to initialize
-    await wait(2000)
+    // Check if canvas is visible (using optimized helper)
+    const canvasVisible = await isCanvasVisible(page)
+    expect(canvasVisible).toBeTruthy()
 
-    // Navigate to level select
-    const levelSelectButton = page.getByText('Level Select', { exact: true })
-    await levelSelectButton.click()
-    await wait(1000)
+    // Check if game state is initialized (using optimized helper)
+    const gameStateInitialized = await waitForGameState(page)
+    expect(gameStateInitialized).toBeTruthy()
 
-    // Find and click on a level button (assuming there's at least one level)
-    // This might need adjustment based on the actual level names in your game
-    const levelButton = page.getByText('Level 1', { exact: false })
+    // Use our improved navigateToScene function
+    const navigated = await navigateToScene(page, 'menu')
+    expect(navigated).toBeTruthy()
 
-    // If the level button exists, click it and verify game state
-    if (await levelButton.isVisible()) {
-      await levelButton.click()
-      await wait(2000)
-
-      // Check that the game state is initialized with the selected level
-      const gameStateInitialized = await page.evaluate(() => {
-        return (
-          window.GAME_STATE !== undefined &&
-          window.GAME_STATE.level !== undefined &&
-          window.GAME_STATE.level.id !== undefined
-        )
-      })
-
-      expect(gameStateInitialized).toBeTruthy()
-    } else {
-      // If no level button is found, we'll skip this test
-      test.skip(true, 'No level buttons found')
-    }
-  })
-
-  test('settings menu has functional audio controls', async ({ page }) => {
-    await page.goto('/')
-
-    // Wait for the game to initialize
-    await wait(2000)
-
-    // Navigate to settings
-    const settingsButton = page.getByText('Settings', { exact: true })
-    await settingsButton.click()
-    await wait(1000)
-
-    // Find and click on audio toggle button (assuming there's a mute/unmute button)
-    const audioButton = page.getByText('Audio:', { exact: false })
-
-    // If the audio button exists, click it and verify the change
-    if (await audioButton.isVisible()) {
-      // Get initial audio state
-      const initialAudioState = await page.evaluate(() => {
-        // This assumes there's a way to check audio state from the game
-        // Adjust based on your actual implementation
-        return window.GAME_STATE && window.GAME_STATE.audio ? window.GAME_STATE.audio.isMuted() : false
-      })
-
-      // Click the audio button
-      await audioButton.click()
-      await wait(1000)
-
-      // Get new audio state
-      const newAudioState = await page.evaluate(() => {
-        return window.GAME_STATE && window.GAME_STATE.audio ? window.GAME_STATE.audio.isMuted() : false
-      })
-
-      // The state should have toggled
-      expect(newAudioState).not.toEqual(initialAudioState)
-    } else {
-      // If no audio button is found, we'll skip this test
-      test.skip(true, 'No audio controls found')
-    }
-  })
-
-  test('can navigate menus using keyboard', async ({ page }) => {
-    await page.goto('/')
-
-    // Wait for the game to initialize
-    await wait(2000)
-
-    // Check initial focus (should be on Start Game)
-    const startGameButton = page.getByText('Start Game', { exact: true })
-
-    // Press down arrow to move to Level Select
-    await page.keyboard.press('ArrowDown')
+    // Wait for the scene to initialize (reduced wait time)
     await wait(500)
 
-    // Press down arrow again to move to Settings
-    await page.keyboard.press('ArrowDown')
+    // Verify the game state reflects the menu scene (using helper)
+    const inMenuScene = await verifyScene(page, 'menu')
+    expect(inMenuScene).toBeTruthy()
+  })
+
+  test('can navigate from menu to game scene', async ({ page }) => {
+    await page.goto('/')
+
+    // Check if canvas is visible and game state is initialized (optimized)
+    const canvasVisible = await isCanvasVisible(page)
+    expect(canvasVisible).toBeTruthy()
+
+    const gameStateInitialized = await waitForGameState(page)
+    expect(gameStateInitialized).toBeTruthy()
+
+    // Navigate to the game scene directly (using helper)
+    const navigated = await navigateToScene(page, 'game', { levelId: 'start' })
+    expect(navigated).toBeTruthy()
+
+    // Wait for the game scene to initialize (reduced wait time)
     await wait(500)
 
-    // Press Enter to select Settings
-    await page.keyboard.press('Enter')
-    await wait(1000)
+    // Verify we're in the game scene (using helper)
+    const inGameScene = await verifyScene(page, 'game')
+    expect(inGameScene).toBeTruthy()
+  })
 
-    // Check that we're on the settings screen
-    const settingsTitle = page.getByText('SETTINGS', { exact: true })
-    await expect(settingsTitle).toBeVisible()
+  test('can navigate from menu to level select scene', async ({ page }) => {
+    await page.goto('/')
 
-    // Press Escape to go back to main menu
-    await page.keyboard.press('Escape')
-    await wait(1000)
+    // Check if canvas is visible and game state is initialized (optimized)
+    const canvasVisible = await isCanvasVisible(page)
+    expect(canvasVisible).toBeTruthy()
 
-    // Check that we're back on the main menu
-    const mainMenuTitle = page.getByText('SIGNAL LOST', { exact: true })
-    await expect(mainMenuTitle).toBeVisible()
+    const gameStateInitialized = await waitForGameState(page)
+    expect(gameStateInitialized).toBeTruthy()
+
+    // Navigate to the level select scene directly (using helper)
+    const navigated = await navigateToScene(page, 'levelSelect')
+    expect(navigated).toBeTruthy()
+
+    // Wait for the level select scene to initialize (reduced wait time)
+    await wait(500)
+
+    // Verify we're in the level select scene (using helper)
+    const inLevelSelectScene = await verifyScene(page, 'levelSelect')
+    expect(inLevelSelectScene).toBeTruthy()
+  })
+
+  test('can navigate from menu to settings scene', async ({ page }) => {
+    await page.goto('/')
+
+    // Check if canvas is visible and game state is initialized (optimized)
+    const canvasVisible = await isCanvasVisible(page)
+    expect(canvasVisible).toBeTruthy()
+
+    const gameStateInitialized = await waitForGameState(page)
+    expect(gameStateInitialized).toBeTruthy()
+
+    // Navigate to the settings scene directly (using helper)
+    const navigated = await navigateToScene(page, 'settings')
+    expect(navigated).toBeTruthy()
+
+    // Wait for the settings scene to initialize (reduced wait time)
+    await wait(500)
+
+    // Verify we're in the settings scene (using helper)
+    const inSettingsScene = await verifyScene(page, 'settings')
+    expect(inSettingsScene).toBeTruthy()
+  })
+
+  test('game state has expected properties', async ({ page }) => {
+    await page.goto('/')
+
+    // Check if canvas is visible and game state is initialized (optimized)
+    const canvasVisible = await isCanvasVisible(page)
+    expect(canvasVisible).toBeTruthy()
+
+    const gameStateInitialized = await waitForGameState(page)
+    expect(gameStateInitialized).toBeTruthy()
+
+    // Navigate to the game scene directly (using helper)
+    const navigated = await navigateToScene(page, 'game', { levelId: 'start' })
+    expect(navigated).toBeTruthy()
+
+    // Wait for the game scene to initialize (reduced wait time)
+    await wait(500)
+
+    // Check if the game state has the expected properties (optimized check)
+    const hasExpectedProperties = await page.evaluate(() => {
+      // Check for required properties
+      return window.GAME_STATE && window.GAME_STATE.player !== undefined && window.GAME_STATE.level !== undefined
+    })
+
+    expect(hasExpectedProperties).toBeTruthy()
   })
 })

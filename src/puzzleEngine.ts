@@ -1,5 +1,5 @@
 /**
- * Puzzle logic for block pushing, switches, doors, keys, etc.
+ * Puzzle logic for block pushing, switches, doors, keys, pressure plates, timed doors, etc.
  */
 
 import { GameState } from './state'
@@ -83,6 +83,20 @@ export class PuzzleEngine {
   }
 
   /**
+   * Check if a pressure plate is at the given position
+   */
+  isPressurePlateAt(x: number, y: number): boolean {
+    return this.isEntityTypeAt('pressure_plate', x, y)
+  }
+
+  /**
+   * Check if a timed door is at the given position
+   */
+  isTimedDoorAt(x: number, y: number): boolean {
+    return this.isEntityTypeAt('timed_door', x, y)
+  }
+
+  /**
    * Get entity at a specific position
    */
   getEntityAt(x: number, y: number): any {
@@ -125,6 +139,11 @@ export class PuzzleEngine {
       this.activateSwitch(newX, newY)
     }
 
+    // Check if the block is on a pressure plate
+    if (this.isPressurePlateAt(newX, newY)) {
+      this.activatePressurePlate(newX, newY)
+    }
+
     return true
   }
 
@@ -145,7 +164,7 @@ export class PuzzleEngine {
 
     if (allTargetsCovered) {
       if (this.audio) {
-        this.audio.playSoundEffect('success')
+        this.audio.playSoundEffect('levelComplete')
       }
       this.gameState.solveLevel()
       return true
@@ -176,7 +195,7 @@ export class PuzzleEngine {
     })
 
     if (this.audio) {
-      this.audio.playSoundEffect('success')
+      this.audio.playSoundEffect('interact')
     }
 
     // Check if all switches are activated
@@ -201,6 +220,9 @@ export class PuzzleEngine {
     const allSwitchesActivated = switches.every(switchEntity => switchEntity.activated === true)
 
     if (allSwitchesActivated) {
+      if (this.audio) {
+        this.audio.playSoundEffect('levelComplete')
+      }
       this.gameState.solveLevel()
       return true
     }
@@ -226,6 +248,34 @@ export class PuzzleEngine {
 
     if (this.audio) {
       this.audio.playSoundEffect('pickup')
+    }
+
+    // Add visual feedback
+    try {
+      const gameObject = keyEntity.gameObject
+      if (gameObject && 'setTint' in gameObject) {
+        const sprite = gameObject as Phaser.GameObjects.Image
+        sprite.setTint(0xffff00)
+
+        // Fade out the key
+        if ('scene' in gameObject) {
+          const scene = (gameObject as any).scene as Phaser.Scene
+          scene.tweens.add({
+            targets: gameObject,
+            alpha: 0,
+            duration: 300,
+            onComplete: () => {
+              try {
+                sprite.setVisible(false)
+              } catch (error) {
+                // Ignore errors in CI
+              }
+            },
+          })
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to show key collection feedback, likely running in CI environment:', error)
     }
 
     return true
@@ -257,7 +307,35 @@ export class PuzzleEngine {
     this.gameState.updateEntity(doorEntity.id, { active: false })
 
     if (this.audio) {
-      this.audio.playSoundEffect('success')
+      this.audio.playSoundEffect('unlock')
+    }
+
+    // Add visual feedback
+    try {
+      const gameObject = doorEntity.gameObject
+      if (gameObject && 'setTint' in gameObject) {
+        const sprite = gameObject as Phaser.GameObjects.Image
+        sprite.setTint(0x00ff00)
+
+        // Fade out the door
+        if ('scene' in gameObject) {
+          const scene = (gameObject as any).scene as Phaser.Scene
+          scene.tweens.add({
+            targets: gameObject,
+            alpha: 0,
+            duration: 500,
+            onComplete: () => {
+              try {
+                sprite.setVisible(false)
+              } catch (error) {
+                // Ignore errors in CI
+              }
+            },
+          })
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to show door unlock feedback, likely running in CI environment:', error)
     }
 
     // Check if all locked doors are unlocked
@@ -277,6 +355,9 @@ export class PuzzleEngine {
 
     // If there are no locked doors left, this puzzle type is complete
     if (lockedDoors.length === 0) {
+      if (this.audio) {
+        this.audio.playSoundEffect('levelComplete')
+      }
       this.gameState.solveLevel()
       return true
     }
@@ -308,7 +389,7 @@ export class PuzzleEngine {
     const targetTeleporter = otherTeleporters[0]
 
     if (this.audio) {
-      this.audio.playSoundEffect('success')
+      this.audio.playSoundEffect('teleport')
     }
 
     return {
@@ -319,6 +400,118 @@ export class PuzzleEngine {
   }
 
   /**
+   * Activate a pressure plate at the given position
+   */
+  activatePressurePlate(x: number, y: number): boolean {
+    const plateEntity = this.getEntityAt(x, y)
+
+    if (!plateEntity || plateEntity.type !== 'pressure_plate') {
+      return false
+    }
+
+    // Mark the pressure plate as activated
+    this.gameState.updateEntity(plateEntity.id, { activated: true })
+
+    // Find and open all timed doors
+    const entities = this.gameState.level.entities
+    const timedDoors = Object.values(entities).filter(entity => entity.type === 'timed_door')
+
+    timedDoors.forEach(door => {
+      this.gameState.updateEntity(door.id, { active: false })
+
+      // Set a timer to close the door after the specified duration
+      const duration = door.duration || 5000 // Default to 5 seconds if not specified
+
+      // Store the timer ID in the door entity for potential cancellation
+      const timerId = setTimeout(() => {
+        // Close the door after the duration
+        this.gameState.updateEntity(door.id, { active: true })
+
+        // Check if any pressure plates are still activated
+        const activatedPlates = Object.values(entities).filter(
+          entity => entity.type === 'pressure_plate' && entity.activated === true
+        )
+
+        // If any plates are still activated, keep the doors open
+        if (activatedPlates.length > 0) {
+          this.gameState.updateEntity(door.id, { active: false })
+        }
+      }, duration)
+
+      this.gameState.updateEntity(door.id, { timerId })
+    })
+
+    if (this.audio) {
+      this.audio.playSoundEffect('interact')
+    }
+
+    return true
+  }
+
+  /**
+   * Deactivate a pressure plate at the given position
+   */
+  deactivatePressurePlate(x: number, y: number): boolean {
+    const plateEntity = this.getEntityAt(x, y)
+
+    if (!plateEntity || plateEntity.type !== 'pressure_plate') {
+      return false
+    }
+
+    // Mark the pressure plate as deactivated
+    this.gameState.updateEntity(plateEntity.id, { activated: false })
+
+    // Check if any pressure plates are still activated
+    const entities = this.gameState.level.entities
+    const activatedPlates = Object.values(entities).filter(
+      entity => entity.type === 'pressure_plate' && entity.activated === true
+    )
+
+    // If no plates are activated, close all timed doors
+    if (activatedPlates.length === 0) {
+      const timedDoors = Object.values(entities).filter(entity => entity.type === 'timed_door')
+
+      timedDoors.forEach(door => {
+        // Clear any existing timers
+        if (door.timerId) {
+          clearTimeout(door.timerId)
+        }
+
+        // Close the door
+        this.gameState.updateEntity(door.id, { active: true, timerId: null })
+      })
+    }
+
+    return true
+  }
+
+  /**
+   * Check if all pressure plates are activated
+   */
+  checkPressurePlatePuzzleCompletion(): boolean {
+    const entities = this.gameState.level.entities
+    const pressurePlates = Object.values(entities).filter(entity => entity.type === 'pressure_plate')
+
+    // If there are no pressure plates, this puzzle type doesn't apply
+    if (pressurePlates.length === 0) {
+      return false
+    }
+
+    // Check if all pressure plates are activated
+    const allPlatesActivated = pressurePlates.every(plate => plate.activated === true)
+
+    if (allPlatesActivated) {
+      if (this.audio) {
+        this.audio.playSoundEffect('levelComplete')
+      }
+      this.gameState.solveLevel()
+      return true
+    }
+
+    return false
+  }
+
+  /**
    * Check if the level is complete based on all puzzle types
    */
   checkLevelCompletion(): boolean {
@@ -326,8 +519,9 @@ export class PuzzleEngine {
     const blockPuzzleComplete = this.checkBlockPuzzleCompletion()
     const switchPuzzleComplete = this.checkSwitchPuzzleCompletion()
     const keyPuzzleComplete = this.checkKeyPuzzleCompletion()
+    const pressurePlatePuzzleComplete = this.checkPressurePlatePuzzleCompletion()
 
     // If any puzzle type is complete, the level is complete
-    return blockPuzzleComplete || switchPuzzleComplete || keyPuzzleComplete
+    return blockPuzzleComplete || switchPuzzleComplete || keyPuzzleComplete || pressurePlatePuzzleComplete
   }
 }

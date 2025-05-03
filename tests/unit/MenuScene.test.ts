@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import MenuScene from '../../src/scenes/MenuScene'
+import { GameState } from '../../src/state'
 
 // Mock Phaser
 vi.mock('phaser', () => {
@@ -9,15 +10,20 @@ vi.mock('phaser', () => {
         scene = { key: 'menu' }
         constructor() {}
         add: any = {
-          rectangle: vi.fn().mockReturnValue({
-            setOrigin: vi.fn().mockReturnThis(),
-            setAlpha: vi.fn().mockReturnThis(),
-          }),
           text: vi.fn().mockReturnValue({
             setOrigin: vi.fn().mockReturnThis(),
             setInteractive: vi.fn().mockReturnThis(),
             on: vi.fn().mockReturnThis(),
             setStyle: vi.fn().mockReturnThis(),
+            setData: vi.fn().mockReturnThis(),
+          }),
+          rectangle: vi.fn().mockReturnValue({
+            setOrigin: vi.fn().mockReturnThis(),
+            setAlpha: vi.fn().mockReturnThis(),
+            setDepth: vi.fn().mockReturnThis(),
+            setSize: vi.fn().mockReturnThis(),
+            setPosition: vi.fn().mockReturnThis(),
+            setData: vi.fn().mockReturnThis(),
           }),
         }
         cameras: any = {
@@ -35,6 +41,7 @@ vi.mock('phaser', () => {
               on: vi.fn(),
             }),
           },
+          on: vi.fn(),
         }
         scene: any = {
           start: vi.fn(),
@@ -68,6 +75,25 @@ vi.mock('../../src/audio', () => {
         playSequence: vi.fn(),
         toggleMute: vi.fn().mockReturnValue(false),
         isMuted: vi.fn().mockReturnValue(false),
+        dispose: vi.fn(),
+      }
+    }),
+  }
+})
+
+// Mock MusicManager
+vi.mock('../../src/musicManager', () => {
+  return {
+    MusicManager: vi.fn().mockImplementation(() => {
+      return {
+        playTrack: vi.fn(),
+        stopTrack: vi.fn().mockImplementation((fadeOut, callback) => {
+          if (callback) callback()
+        }),
+        setVolume: vi.fn(),
+        updateVolume: vi.fn(),
+        toggleMusic: vi.fn(),
+        dispose: vi.fn(),
       }
     }),
   }
@@ -78,14 +104,36 @@ describe('MenuScene', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+
+    // Create a game state
+    const gameState = new GameState()
+    window.GAME_STATE = gameState
+
     menuScene = new MenuScene()
+
     // Initialize audio manually since we're not calling init()
     menuScene['audio'] = {
       playNote: vi.fn(),
       playSequence: vi.fn(),
       toggleMute: vi.fn().mockReturnValue(false),
       isMuted: vi.fn().mockReturnValue(false),
+      dispose: vi.fn(),
     }
+
+    // Initialize music manually
+    menuScene['music'] = {
+      playTrack: vi.fn(),
+      stopTrack: vi.fn().mockImplementation((fadeOut, callback) => {
+        if (callback) callback()
+      }),
+      setVolume: vi.fn(),
+      updateVolume: vi.fn(),
+      toggleMusic: vi.fn(),
+      dispose: vi.fn(),
+    }
+
+    // Initialize game state
+    menuScene['gameState'] = gameState
   })
 
   describe('constructor', () => {
@@ -132,8 +180,14 @@ describe('MenuScene', () => {
 
       clickHandler()
 
+      // Check if music was stopped
+      expect(menuScene['music'].stopTrack).toHaveBeenCalled()
+
       // Check if the scene transition was triggered
-      expect(menuScene.scene.start).toHaveBeenCalledWith('game', { levelId: 'start' })
+      expect(menuScene.scene.start).toHaveBeenCalledWith('game', {
+        levelId: 'start',
+        gameState: menuScene['gameState'],
+      })
     })
   })
 })

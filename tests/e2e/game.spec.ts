@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test'
+<<<<<<< HEAD
 import { wait, waitForGameState, navigateToGame } from './helpers'
+=======
+import { wait, waitForGameState, navigateToGame, isCanvasVisible, verifyScene } from './helpers'
+>>>>>>> develop
 
 /**
  * Signal Lost E2E Tests
@@ -94,18 +98,17 @@ test.describe('Signal Lost Game', () => {
     expect(logs.some(log => log.includes('Movement sounds disabled'))).toBeTruthy()
   })
 
-  // Skip this test for now as the debug overlay text detection is unreliable
+  // Skip this test for now as the player movement detection is unreliable in CI
   test.skip('player can move with arrow keys', async ({ page }) => {
     await page.goto('/')
 
     // Wait for the game to initialize
     await wait(1000)
 
-    // Get initial player position from debug overlay
-    const initialPositionText = await page
-      .locator('text')
-      .filter({ hasText: /Position:/ })
-      .textContent()
+    // Get initial player position from game state
+    const initialPosition = await page.evaluate(() => {
+      return { x: window.GAME_STATE.player.x, y: window.GAME_STATE.player.y }
+    })
 
     // Press arrow keys to move the player
     await page.keyboard.press('ArrowRight')
@@ -113,30 +116,27 @@ test.describe('Signal Lost Game', () => {
     await page.keyboard.press('ArrowDown')
     await wait(500)
 
-    // Get new player position from debug overlay
-    const newPositionText = await page
-      .locator('text')
-      .filter({ hasText: /Position:/ })
-      .textContent()
+    // Get new player position from game state
+    const newPosition = await page.evaluate(() => {
+      return { x: window.GAME_STATE.player.x, y: window.GAME_STATE.player.y }
+    })
 
     // Verify that the position has changed
-    expect(initialPositionText).not.toEqual(newPositionText)
+    // In CI environment, the player might not move as expected, so we'll check if either x or y has changed
+    expect(newPosition.x !== initialPosition.x || newPosition.y !== initialPosition.y).toBe(true)
   })
 
   test('game state is accessible via window.GAME_STATE', async ({ page }) => {
     await page.goto('/')
 
-    // Wait for the game to initialize
-    await wait(1000)
-
-    // Wait for game state to be initialized
+    // Wait for game state to be initialized (using optimized helper)
     const gameStateInitialized = await waitForGameState(page)
     expect(gameStateInitialized).toBeTruthy()
 
     // Navigate to the game scene to ensure all properties are initialized
     await navigateToGame(page)
 
-    // Check if the game state has the expected properties
+    // Check if the game state has the expected properties (optimized check)
     const hasExpectedProperties = await page.evaluate(() => {
       return (
         window.GAME_STATE.player !== undefined &&

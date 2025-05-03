@@ -52,6 +52,22 @@ describe('PuzzleEngine', () => {
     })
     gameState.registerEntity('teleporter_7_7', { id: 'teleporter_7_7', type: 'teleporter', x: 7, y: 7, active: true })
     gameState.registerEntity('teleporter_8_8', { id: 'teleporter_8_8', type: 'teleporter', x: 8, y: 8, active: true })
+    gameState.registerEntity('pressure_plate_9_9', {
+      id: 'pressure_plate_9_9',
+      type: 'pressure_plate',
+      x: 9,
+      y: 9,
+      active: true,
+      activated: false,
+    })
+    gameState.registerEntity('timed_door_10_10', {
+      id: 'timed_door_10_10',
+      type: 'timed_door',
+      x: 10,
+      y: 10,
+      active: true,
+      duration: 3000,
+    })
   })
 
   describe('isEntityTypeAt', () => {
@@ -63,6 +79,8 @@ describe('PuzzleEngine', () => {
       expect(puzzleEngine.isKeyAt(5, 5)).toBe(true)
       expect(puzzleEngine.isLockedDoorAt(6, 6)).toBe(true)
       expect(puzzleEngine.isTeleporterAt(7, 7)).toBe(true)
+      expect(puzzleEngine.isPressurePlateAt(9, 9)).toBe(true)
+      expect(puzzleEngine.isTimedDoorAt(10, 10)).toBe(true)
 
       // Test negative cases
       expect(puzzleEngine.isBlockAt(2, 2)).toBe(false)
@@ -91,7 +109,7 @@ describe('PuzzleEngine', () => {
     })
 
     it('should return undefined if no entity is at the position', () => {
-      const entity = puzzleEngine.getEntityAt(10, 10)
+      const entity = puzzleEngine.getEntityAt(20, 20)
 
       expect(entity).toBeUndefined()
     })
@@ -258,18 +276,91 @@ describe('PuzzleEngine', () => {
     })
   })
 
+  describe('activatePressurePlate', () => {
+    it('should activate a pressure plate and open timed doors', () => {
+      const result = puzzleEngine.activatePressurePlate(9, 9)
+
+      expect(result).toBe(true)
+      expect(gameState.level.entities['pressure_plate_9_9'].activated).toBe(true)
+      expect(gameState.level.entities['timed_door_10_10'].active).toBe(false)
+    })
+
+    it('should return false if no pressure plate is at the position', () => {
+      const result = puzzleEngine.activatePressurePlate(11, 11)
+
+      expect(result).toBe(false)
+    })
+
+    it('should set a timer to close the door after the duration', () => {
+      // Mock setTimeout
+      const originalSetTimeout = global.setTimeout
+      const mockSetTimeout = vi.fn().mockReturnValue(123)
+      global.setTimeout = mockSetTimeout
+
+      puzzleEngine.activatePressurePlate(9, 9)
+
+      expect(mockSetTimeout).toHaveBeenCalled()
+      expect(mockSetTimeout.mock.calls[0][1]).toBe(3000) // Duration from the entity
+
+      // Restore setTimeout
+      global.setTimeout = originalSetTimeout
+    })
+  })
+
+  describe('deactivatePressurePlate', () => {
+    it('should deactivate a pressure plate', () => {
+      // First activate the plate
+      puzzleEngine.activatePressurePlate(9, 9)
+
+      const result = puzzleEngine.deactivatePressurePlate(9, 9)
+
+      expect(result).toBe(true)
+      expect(gameState.level.entities['pressure_plate_9_9'].activated).toBe(false)
+    })
+
+    it('should return false if no pressure plate is at the position', () => {
+      const result = puzzleEngine.deactivatePressurePlate(11, 11)
+
+      expect(result).toBe(false)
+    })
+  })
+
+  describe('checkPressurePlatePuzzleCompletion', () => {
+    it('should detect when all pressure plates are activated', () => {
+      // Activate the pressure plate
+      gameState.updateEntity('pressure_plate_9_9', { activated: true })
+
+      const result = puzzleEngine.checkPressurePlatePuzzleCompletion()
+
+      expect(result).toBe(true)
+      expect(gameState.level.solved).toBe(true)
+    })
+
+    it('should not mark the puzzle as solved if not all pressure plates are activated', () => {
+      // Make sure the plate is not activated
+      gameState.updateEntity('pressure_plate_9_9', { activated: false })
+
+      const result = puzzleEngine.checkPressurePlatePuzzleCompletion()
+
+      expect(result).toBe(false)
+      expect(gameState.level.solved).toBe(false)
+    })
+  })
+
   describe('checkLevelCompletion', () => {
     it('should check all puzzle types for completion', () => {
       // Spy on the individual completion methods
       const blockSpy = vi.spyOn(puzzleEngine, 'checkBlockPuzzleCompletion')
       const switchSpy = vi.spyOn(puzzleEngine, 'checkSwitchPuzzleCompletion')
       const keySpy = vi.spyOn(puzzleEngine, 'checkKeyPuzzleCompletion')
+      const pressurePlateSpy = vi.spyOn(puzzleEngine, 'checkPressurePlatePuzzleCompletion')
 
       puzzleEngine.checkLevelCompletion()
 
       expect(blockSpy).toHaveBeenCalled()
       expect(switchSpy).toHaveBeenCalled()
       expect(keySpy).toHaveBeenCalled()
+      expect(pressurePlateSpy).toHaveBeenCalled()
     })
   })
 })

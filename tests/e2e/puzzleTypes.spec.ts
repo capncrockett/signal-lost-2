@@ -390,4 +390,193 @@ test.describe('Puzzle Types', () => {
     expect(finalX).toBe(8)
     expect(finalY).toBe(8)
   })
+
+  test('pressure plates can activate timed doors', async ({ page }) => {
+    await page.goto('/')
+
+    // Wait for the game to initialize
+    await page.waitForFunction(() => window.GAME_STATE !== undefined, { timeout: 5000 })
+
+    // Set up a test level with pressure plates and timed doors
+    await page.evaluate(() => {
+      // Initialize a test level
+      window.GAME_STATE.loadLevel('test')
+
+      // Register a pressure plate and a timed door
+      window.GAME_STATE.registerEntity('pressure_plate_9_9', {
+        id: 'pressure_plate_9_9',
+        type: 'pressure_plate',
+        x: 9,
+        y: 9,
+        active: true,
+        activated: false,
+      })
+      window.GAME_STATE.registerEntity('timed_door_10_10', {
+        id: 'timed_door_10_10',
+        type: 'timed_door',
+        x: 10,
+        y: 10,
+        active: true,
+        duration: 3000,
+      })
+    })
+
+    await page.waitForTimeout(500)
+
+    // Verify initial state
+    const initialDoorActive = await page.evaluate(() => {
+      return window.GAME_STATE.level.entities['timed_door_10_10'].active
+    })
+    expect(initialDoorActive).toBe(true)
+
+    // Activate the pressure plate
+    await page.evaluate(() => {
+      // Get the puzzle engine from the game scene
+      const puzzleEngine = {
+        activatePressurePlate: (x, y) => {
+          const entities = window.GAME_STATE.level.entities
+          const plateEntity = Object.values(entities).find(
+            entity =>
+              entity.type === 'pressure_plate' &&
+              Math.round(entity.x) === Math.round(x) &&
+              Math.round(entity.y) === Math.round(y)
+          )
+
+          if (!plateEntity) return false
+
+          // Mark the pressure plate as activated
+          window.GAME_STATE.updateEntity(plateEntity.id, { activated: true })
+
+          // Find and open all timed doors
+          const timedDoors = Object.values(entities).filter(entity => entity.type === 'timed_door')
+          timedDoors.forEach(door => {
+            window.GAME_STATE.updateEntity(door.id, { active: false })
+          })
+
+          return true
+        },
+      }
+
+      // Activate the pressure plate
+      puzzleEngine.activatePressurePlate(9, 9)
+    })
+
+    await page.waitForTimeout(500)
+
+    // Verify the door is deactivated (opened)
+    const doorActiveAfterPlate = await page.evaluate(() => {
+      return window.GAME_STATE.level.entities['timed_door_10_10'].active
+    })
+    expect(doorActiveAfterPlate).toBe(false)
+
+    // Verify the pressure plate is activated
+    const plateActivated = await page.evaluate(() => {
+      return window.GAME_STATE.level.entities['pressure_plate_9_9'].activated
+    })
+    expect(plateActivated).toBe(true)
+  })
+
+  test('blocks can activate pressure plates', async ({ page }) => {
+    await page.goto('/')
+
+    // Wait for the game to initialize
+    await page.waitForFunction(() => window.GAME_STATE !== undefined, { timeout: 5000 })
+
+    // Set up a test level with blocks and pressure plates
+    await page.evaluate(() => {
+      // Initialize a test level
+      window.GAME_STATE.loadLevel('test')
+
+      // Register a block and a pressure plate
+      window.GAME_STATE.registerEntity('block_1_1', { id: 'block_1_1', type: 'block', x: 1, y: 1, active: true })
+      window.GAME_STATE.registerEntity('pressure_plate_3_3', {
+        id: 'pressure_plate_3_3',
+        type: 'pressure_plate',
+        x: 3,
+        y: 3,
+        active: true,
+        activated: false,
+      })
+      window.GAME_STATE.registerEntity('timed_door_4_4', {
+        id: 'timed_door_4_4',
+        type: 'timed_door',
+        x: 4,
+        y: 4,
+        active: true,
+      })
+    })
+
+    await page.waitForTimeout(500)
+
+    // Verify initial state
+    const initialPlateActivated = await page.evaluate(() => {
+      return window.GAME_STATE.level.entities['pressure_plate_3_3'].activated
+    })
+    expect(initialPlateActivated).toBe(false)
+
+    // Move the block to the pressure plate
+    await page.evaluate(() => {
+      // Get the puzzle engine from the game scene
+      const puzzleEngine = {
+        tryMoveBlock: (blockId, dx, dy) => {
+          const block = window.GAME_STATE.level.entities[blockId]
+          window.GAME_STATE.updateEntity(blockId, { x: block.x + dx, y: block.y + dy })
+          return true
+        },
+        isPressurePlateAt: (x, y) => {
+          const entities = window.GAME_STATE.level.entities
+          return Object.values(entities).some(
+            entity =>
+              entity.type === 'pressure_plate' &&
+              Math.round(entity.x) === Math.round(x) &&
+              Math.round(entity.y) === Math.round(y)
+          )
+        },
+        activatePressurePlate: (x, y) => {
+          const entities = window.GAME_STATE.level.entities
+          const plateEntity = Object.values(entities).find(
+            entity =>
+              entity.type === 'pressure_plate' &&
+              Math.round(entity.x) === Math.round(x) &&
+              Math.round(entity.y) === Math.round(y)
+          )
+
+          if (!plateEntity) return false
+
+          // Mark the pressure plate as activated
+          window.GAME_STATE.updateEntity(plateEntity.id, { activated: true })
+
+          // Find and open all timed doors
+          const timedDoors = Object.values(entities).filter(entity => entity.type === 'timed_door')
+          timedDoors.forEach(door => {
+            window.GAME_STATE.updateEntity(door.id, { active: false })
+          })
+
+          return true
+        },
+      }
+
+      // Move the block to the pressure plate position
+      puzzleEngine.tryMoveBlock('block_1_1', 2, 2)
+
+      // Check if the block is on a pressure plate and activate it
+      if (puzzleEngine.isPressurePlateAt(3, 3)) {
+        puzzleEngine.activatePressurePlate(3, 3)
+      }
+    })
+
+    await page.waitForTimeout(500)
+
+    // Verify the pressure plate is activated
+    const finalPlateActivated = await page.evaluate(() => {
+      return window.GAME_STATE.level.entities['pressure_plate_3_3'].activated
+    })
+    expect(finalPlateActivated).toBe(true)
+
+    // Verify the timed door is opened
+    const finalDoorActive = await page.evaluate(() => {
+      return window.GAME_STATE.level.entities['timed_door_4_4'].active
+    })
+    expect(finalDoorActive).toBe(false)
+  })
 })

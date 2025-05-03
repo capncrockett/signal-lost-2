@@ -4,6 +4,7 @@ import { GameState } from '../../src/state'
 import { Player } from '../../src/player'
 import { LevelData } from '../../src/levels'
 import { AudioManager } from '../../src/audio'
+import { MusicManager } from '../../src/musicManager'
 
 // Mock the AudioManager
 vi.mock('../../src/audio', () => {
@@ -22,6 +23,24 @@ vi.mock('../../src/audio', () => {
   }
 })
 
+// Mock the MusicManager
+vi.mock('../../src/musicManager', () => {
+  return {
+    MusicManager: vi.fn().mockImplementation(() => {
+      return {
+        playTrack: vi.fn(),
+        stopTrack: vi.fn().mockImplementation((fadeOut, callback) => {
+          if (callback) callback()
+        }),
+        setVolume: vi.fn(),
+        updateVolume: vi.fn(),
+        toggleMusic: vi.fn(),
+        dispose: vi.fn(),
+      }
+    }),
+  }
+})
+
 // Mock Phaser
 vi.mock('phaser', () => {
   return {
@@ -32,14 +51,15 @@ vi.mock('phaser', () => {
         add = {
           image: vi.fn().mockReturnThis(),
           text: vi.fn().mockReturnValue({
-            setVisible: vi.fn(),
-            setScrollFactor: vi.fn(),
-            setDepth: vi.fn(),
-            setText: vi.fn(),
+            setVisible: vi.fn().mockReturnThis(),
+            setScrollFactor: vi.fn().mockReturnThis(),
+            setDepth: vi.fn().mockReturnThis(),
+            setText: vi.fn().mockReturnThis(),
             setOrigin: vi.fn().mockReturnThis(),
             setInteractive: vi.fn().mockReturnThis(),
             on: vi.fn().mockReturnThis(),
             setStyle: vi.fn().mockReturnThis(),
+            setData: vi.fn().mockReturnThis(),
           }),
           rectangle: vi.fn().mockReturnValue({
             setOrigin: vi.fn().mockReturnThis(),
