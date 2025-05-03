@@ -564,7 +564,8 @@ test.describe('Puzzle Types', () => {
       }
     })
 
-    await page.waitForTimeout(500)
+    // Short wait for the puzzle to update (optimized for CI)
+    await wait(process.env.CI ? 100 : 200)
 
     // Verify the pressure plate is activated
     const finalPlateActivated = await page.evaluate(() => {
