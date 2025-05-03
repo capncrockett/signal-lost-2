@@ -20,6 +20,12 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:8000',
     trace: 'on-first-retry',
+<<<<<<< HEAD
+    // Add a shorter navigation timeout
+    navigationTimeout: 15000,
+    // Add a shorter action timeout
+    actionTimeout: 10000,
+=======
     // Reduce viewport size for faster rendering
     viewport: { width: 800, height: 600 },
     // Disable screenshots on failure to improve performance
@@ -30,21 +36,36 @@ export default defineConfig({
     launchOptions: {
       slowMo: 0,
     },
+>>>>>>> develop
   },
   projects: [
     {
       name: 'chromium',
+<<<<<<< HEAD
+      use: { ...devices['Desktop Chrome'] },
+=======
       use: { 
         ...devices['Desktop Chrome'],
         // Use mobile viewport for faster rendering
         viewport: { width: 800, height: 600 },
       },
+>>>>>>> develop
     },
   ],
   webServer: {
     command: 'npm run dev',
     url: 'http://localhost:8000',
     reuseExistingServer: !process.env.CI,
+<<<<<<< HEAD
+    // Add timeout for server to be ready
+    timeout: 60000, // 60 seconds
+    // Add retry for server to be ready
+    reuseExistingServer: !process.env.CI,
+  },
+  // Group tests to minimize server restarts
+  shard: process.env.CI ? { total: 1, current: 1 } : undefined,
+=======
     timeout: 60000, // 1 minute timeout for server startup
   },
+>>>>>>> develop
 })

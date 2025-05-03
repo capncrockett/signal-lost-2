@@ -55,11 +55,14 @@ jobs:
 
       - name: Run E2E tests (Playwright)
         run: npm run test:e2e:ci
+<<<<<<< HEAD
+=======
         env:
           # Set CI environment variable to enable CI-specific optimizations
           CI: true
           # Increase Node.js memory limit for better performance
           NODE_OPTIONS: --max-old-space-size=4096
+>>>>>>> develop
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4

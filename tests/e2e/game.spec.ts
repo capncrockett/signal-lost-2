@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test'
+<<<<<<< HEAD
+import { wait, waitForGameState, navigateToGame } from './helpers'
+=======
 import { wait, waitForGameState, navigateToGame, isCanvasVisible, verifyScene } from './helpers'
+>>>>>>> develop
 
 /**
  * Signal Lost E2E Tests

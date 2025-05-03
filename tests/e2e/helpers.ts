@@ -2,28 +2,51 @@
  * Signal Lost E2E Test Helpers
  *
  * Common helper functions for E2E tests to reduce duplication and improve performance.
+ * Optimized for CI environment with faster polling and reduced wait times.
  */
 
 import { Page } from '@playwright/test'
 
-// Helper function to wait for a short time (with a default shorter timeout)
-export const wait = (ms: number = 500) => new Promise(resolve => setTimeout(resolve, ms))
+/**
+ * Helper function to wait for a short time with CI optimization
+ * In CI environment, we use shorter wait times to improve performance
+ */
+export const wait = (ms = 500) => {
+  // Use shorter wait times in CI environment
+  const adjustedMs = process.env.CI ? Math.min(ms, 200) : ms
+  return new Promise(resolve => setTimeout(resolve, adjustedMs))
+}
 
-// Helper function to wait for game state to be initialized (with optimized polling)
-export const waitForGameState = async (page: Page, maxAttempts: number = 5, delayBetweenAttempts: number = 300): Promise<boolean> => {
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    const gameStateExists = await page.evaluate(() => {
-      return window.GAME_STATE !== undefined
+/**
+ * Helper function to wait for game state to be initialized
+ * Uses Playwright's built-in waitForFunction for better performance
+ */
+export const waitForGameState = async (page: Page, timeout = 5000): Promise<boolean> => {
+  try {
+    // Use waitForFunction with polling for better performance
+    await page.waitForFunction(() => window.GAME_STATE !== undefined, {
+      timeout: timeout,
+      polling: process.env.CI ? 100 : 300, // Faster polling in CI
     })
+    return true
+  } catch (error) {
+    console.log('waitForFunction failed, falling back to manual polling')
+    // Fall back to manual polling if waitForFunction fails
+    const maxAttempts = 5
+    const delayBetweenAttempts = process.env.CI ? 200 : 300
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const gameStateExists = await page.evaluate(() => {
+        return window.GAME_STATE !== undefined
+      })
 
-    if (gameStateExists) {
-      return true
+      if (gameStateExists) {
+        return true
+      }
+
+      await wait(delayBetweenAttempts)
     }
-
-    await wait(delayBetweenAttempts)
+    return false
   }
-
-  return false
 }
 
 // Helper function to check if canvas is visible
@@ -88,13 +111,13 @@ export const navigateToScene = async (page: Page, sceneKey: string, data?: any):
 
                 // Verify menu elements are created (CI-specific)
                 setTimeout(() => {
-                  const menuElements = document.querySelectorAll('[data-ci-test-id^="menu-"]');
-                  console.log(`Found ${menuElements.length} menu elements with ci-test-id`);
+                  const menuElements = document.querySelectorAll('[data-ci-test-id^="menu-"]')
+                  console.log(`Found ${menuElements.length} menu elements with ci-test-id`)
 
                   menuElements.forEach(el => {
-                    console.log(`Menu element: ${el.getAttribute('data-ci-test-id')}`);
-                  });
-                }, 500);
+                    console.log(`Menu element: ${el.getAttribute('data-ci-test-id')}`)
+                  })
+                }, 500)
               }
             } catch (e) {
               console.log('Could not start scene via Phaser, using game state only:', e)
@@ -114,13 +137,13 @@ export const navigateToScene = async (page: Page, sceneKey: string, data?: any):
 
                 // Verify level select elements are created (CI-specific)
                 setTimeout(() => {
-                  const levelSelectElements = document.querySelectorAll('[data-ci-test-id^="level-select-"]');
-                  console.log(`Found ${levelSelectElements.length} level select elements with ci-test-id`);
+                  const levelSelectElements = document.querySelectorAll('[data-ci-test-id^="level-select-"]')
+                  console.log(`Found ${levelSelectElements.length} level select elements with ci-test-id`)
 
                   levelSelectElements.forEach(el => {
-                    console.log(`Level select element: ${el.getAttribute('data-ci-test-id')}`);
-                  });
-                }, 500);
+                    console.log(`Level select element: ${el.getAttribute('data-ci-test-id')}`)
+                  })
+                }, 500)
               }
             } catch (e) {
               console.log('Could not start scene via Phaser, using game state only:', e)
@@ -140,13 +163,13 @@ export const navigateToScene = async (page: Page, sceneKey: string, data?: any):
 
                 // Verify settings elements are created (CI-specific)
                 setTimeout(() => {
-                  const settingsElements = document.querySelectorAll('[data-ci-test-id^="settings-"]');
-                  console.log(`Found ${settingsElements.length} settings elements with ci-test-id`);
+                  const settingsElements = document.querySelectorAll('[data-ci-test-id^="settings-"]')
+                  console.log(`Found ${settingsElements.length} settings elements with ci-test-id`)
 
                   settingsElements.forEach(el => {
-                    console.log(`Settings element: ${el.getAttribute('data-ci-test-id')}`);
-                  });
-                }, 500);
+                    console.log(`Settings element: ${el.getAttribute('data-ci-test-id')}`)
+                  })
+                }, 500)
               }
             } catch (e) {
               console.log('Could not start scene via Phaser, using game state only:', e)
@@ -177,43 +200,43 @@ export const navigateToGame = async (page: Page): Promise<void> => {
 
 // Helper function to verify we're in a specific scene
 export const verifyScene = async (page: Page, sceneKey: string): Promise<boolean> => {
-  return await page.evaluate((expectedScene) => {
+  return await page.evaluate(expectedScene => {
     // Check using game state (more reliable in CI)
     try {
       // First check game state
-      const gameStateCheck = window.GAME_STATE && window.GAME_STATE.currentScene === expectedScene;
+      const gameStateCheck = window.GAME_STATE && window.GAME_STATE.currentScene === expectedScene
 
       // For menu scenes, also verify scene-specific elements are present
       if (expectedScene === 'menu') {
         // Check for menu-specific elements using the ci-test-id attribute
-        const menuElements = document.querySelectorAll('[data-ci-test-id^="menu-"]');
-        console.log(`Found ${menuElements.length} menu elements with ci-test-id`);
+        const menuElements = document.querySelectorAll('[data-ci-test-id^="menu-"]')
+        console.log(`Found ${menuElements.length} menu elements with ci-test-id`)
 
         // If we have menu elements, we're definitely in the menu scene
         if (menuElements.length > 0) {
-          return true;
+          return true
         }
       } else if (expectedScene === 'levelSelect') {
         // Check for level select-specific elements using the ci-test-id attribute
-        const levelSelectElements = document.querySelectorAll('[data-ci-test-id^="level-select-"]');
-        console.log(`Found ${levelSelectElements.length} level select elements with ci-test-id`);
+        const levelSelectElements = document.querySelectorAll('[data-ci-test-id^="level-select-"]')
+        console.log(`Found ${levelSelectElements.length} level select elements with ci-test-id`)
 
         // If we have level select elements, we're definitely in the level select scene
         if (levelSelectElements.length > 0) {
-          return true;
+          return true
         }
       } else if (expectedScene === 'settings') {
         // Check for settings-specific elements using the ci-test-id attribute
-        const settingsElements = document.querySelectorAll('[data-ci-test-id^="settings-"]');
-        console.log(`Found ${settingsElements.length} settings elements with ci-test-id`);
+        const settingsElements = document.querySelectorAll('[data-ci-test-id^="settings-"]')
+        console.log(`Found ${settingsElements.length} settings elements with ci-test-id`)
 
         // If we have settings elements, we're definitely in the settings scene
         if (settingsElements.length > 0) {
-          return true;
+          return true
         }
       }
 
-      return gameStateCheck;
+      return gameStateCheck
     } catch (error) {
       console.error(`Error checking scene using game state:`, error)
       return false
@@ -222,28 +245,35 @@ export const verifyScene = async (page: Page, sceneKey: string): Promise<boolean
 }
 
 // Helper function to setup a test level with specific entities
-export const setupTestLevel = async (page: Page, levelId: string, entities: Record<string, any> = {}): Promise<boolean> => {
-  return await page.evaluate(({ levelId, entities }) => {
-    try {
-      if (!window.GAME_STATE) {
+export const setupTestLevel = async (
+  page: Page,
+  levelId: string,
+  entities: Record<string, any> = {}
+): Promise<boolean> => {
+  return await page.evaluate(
+    ({ levelId, entities }) => {
+      try {
+        if (!window.GAME_STATE) {
+          return false
+        }
+
+        // Set the level ID
+        window.GAME_STATE.level.id = levelId
+
+        // Register entities
+        for (const [id, entity] of Object.entries(entities)) {
+          window.GAME_STATE.level.entities[id] = {
+            id,
+            ...entity,
+          }
+        }
+
+        return true
+      } catch (error) {
+        console.error('Error setting up test level:', error)
         return false
       }
-
-      // Set the level ID
-      window.GAME_STATE.level.id = levelId
-
-      // Register entities
-      for (const [id, entity] of Object.entries(entities)) {
-        window.GAME_STATE.level.entities[id] = {
-          id,
-          ...entity
-        }
-      }
-
-      return true
-    } catch (error) {
-      console.error('Error setting up test level:', error)
-      return false
-    }
-  }, { levelId, entities })
+    },
+    { levelId, entities }
+  )
 }
