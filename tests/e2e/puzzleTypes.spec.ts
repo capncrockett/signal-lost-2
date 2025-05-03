@@ -394,8 +394,8 @@ test.describe('Puzzle Types', () => {
   test('pressure plates can activate timed doors', async ({ page }) => {
     await page.goto('/')
 
-    // Wait for the game to initialize
-    await page.waitForFunction(() => window.GAME_STATE !== undefined, { timeout: 5000 })
+    // Wait for the game to initialize (using optimized helper)
+    await waitForGameState(page)
 
     // Set up a test level with pressure plates and timed doors
     await page.evaluate(() => {
@@ -479,8 +479,8 @@ test.describe('Puzzle Types', () => {
   test('blocks can activate pressure plates', async ({ page }) => {
     await page.goto('/')
 
-    // Wait for the game to initialize
-    await page.waitForFunction(() => window.GAME_STATE !== undefined, { timeout: 5000 })
+    // Wait for the game to initialize (using optimized helper)
+    await waitForGameState(page)
 
     // Set up a test level with blocks and pressure plates
     await page.evaluate(() => {
