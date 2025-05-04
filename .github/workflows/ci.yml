@@ -26,9 +26,21 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        id: npm-cache
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm ci
+        if: steps.npm-cache.outputs.cache-hit != 'true'
 
       - name: Build & Type-check
         run: npm run build:check
@@ -38,13 +50,19 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        # Always install browsers to ensure they're available
+        # This is more reliable than caching
 
       - name: Run E2E tests (Playwright)
-        run: npm run test:e2e:agent
+        run: npm run test:e2e:ci
+<<<<<<< HEAD
+=======
         env:
           # Set CI environment variable to enable CI-specific optimizations
           CI: true
+          # Increase Node.js memory limit for better performance
+          NODE_OPTIONS: --max-old-space-size=4096
+>>>>>>> develop
 
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4

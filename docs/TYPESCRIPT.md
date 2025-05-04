@@ -14,11 +14,14 @@ The project uses strict TypeScript checking in both local development and CI env
 
 It's important that the local development environment matches the CI environment exactly. This helps catch issues early in the development process and prevents surprises when code is pushed to the repository.
 
+The project has been configured to ensure that the same TypeScript checks are applied in both local development and CI environments. The `tsconfig.dev.json` file has been removed to enforce consistent TypeScript checking across all environments.
+
 ## NPM Scripts
 
-- `npm run build`: Production build with strict TypeScript checking
-- `npm run build:check`: Type-check and build with strict rules (used in CI)
-- `npm run type-check`: Run TypeScript type checking with strict rules
+- `npm run build`: Production build with strict TypeScript checking using the main `tsconfig.json`
+- `npm run build:check`: Type-check and build with strict rules (used in CI) using the main `tsconfig.json`
+- `npm run type-check`: Run TypeScript type checking with strict rules using the main `tsconfig.json`
+- `npm run type-check:ci`: Run TypeScript type checking with the same strict rules as CI
 
 ## Best Practices
 
@@ -88,4 +91,6 @@ The CI environment runs the following command to check for TypeScript errors:
 npm run build:check
 ```
 
-This command runs `tsc --noEmit && vite build`, which performs a full type check with all strict rules enabled before building the project.
+This command runs `tsc --noEmit --project tsconfig.json && vite build`, which performs a full type check with all strict rules enabled before building the project.
+
+The local development environment now uses the exact same TypeScript configuration as the CI environment, ensuring consistency between local development and CI.
