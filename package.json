@@ -20,7 +20,8 @@
     "lint": "eslint src --ext ts",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx}\"",
-    "pre-commit": "npm run type-check && npm run lint && npm run format:check"
+    "docs:check": "node scripts/check-documentation.js",
+    "pre-commit": "npm run type-check && npm run lint && npm run format:check && npm run docs:check"
   },
   "devDependencies": {
     "@playwright/test": "^1.32.0",

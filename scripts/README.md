@@ -14,6 +14,23 @@ Usage:
 npm run type-check:ci
 ```
 
+### `check-documentation.js`
+
+Analyzes the codebase to check for proper documentation coverage. It reports files and exported symbols that are missing documentation.
+
+The script checks for:
+
+- Files with low comment ratio
+- Files without header comments
+- Exported symbols without documentation
+- Missing documentation files
+
+Usage:
+
+```bash
+npm run docs:check
+```
+
 ### `parse-test-results.js`
 
 Parses the JSON test results from Playwright E2E tests and outputs a summary.
