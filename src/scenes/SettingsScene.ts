@@ -56,6 +56,7 @@ export default class SettingsScene extends Phaser.Scene {
       .rectangle(0, 0, 200, 40, 0x444444)
       .setOrigin(0.5)
       .setAlpha(0)
+      .setStrokeStyle(2, 0xffff00)
       .setData('test-id', 'focus-indicator')
       .setData('ci-test-id', 'settings-focus-indicator')
 
@@ -209,12 +210,12 @@ export default class SettingsScene extends Phaser.Scene {
       .setData('test-id', 'debug-button')
       .setData('ci-test-id', 'settings-debug-button')
       .on('pointerover', () => {
-        if (this.selectedButton !== 2) {
+        if (this.selectedButton !== 3) {
           this.debugButton.setStyle(smallButtonHoverStyle)
         }
       })
       .on('pointerout', () => {
-        if (this.selectedButton !== 2) {
+        if (this.selectedButton !== 3) {
           this.debugButton.setStyle(smallButtonStyle)
         }
       })
@@ -298,6 +299,8 @@ export default class SettingsScene extends Phaser.Scene {
     // Add keyboard navigation
     const upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP)
     const downKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN)
+    const leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT)
+    const rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT)
     const enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER)
     const spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
     const escKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC)
@@ -389,6 +392,61 @@ export default class SettingsScene extends Phaser.Scene {
 
     enterKey.on('down', selectButton)
     spaceKey.on('down', selectButton)
+
+    // Handle left/right keys for volume control when music button is selected
+    leftKey.on('down', () => {
+      if (this.selectedButton === 2) {
+        // Decrease volume by 10%
+        const currentVolume = this.gameState.audio.musicVolume
+        const newVolume = Math.max(0, currentVolume - 0.1)
+
+        // Update volume
+        this.gameState.setMusicVolume(newVolume)
+        this.music.setVolume(newVolume)
+
+        // Update slider position
+        const sliderWidth = 200
+        const sliderX = this.cameras.main.centerX
+        const minX = sliderX - sliderWidth / 2
+        this.musicVolumeSlider.x = minX + newVolume * sliderWidth
+
+        // Update text
+        this.musicVolumeText.setText(`Volume: ${Math.round(newVolume * 100)}%`)
+
+        // Play sound
+        this.audio.playNote('A3', '32n')
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
+      }
+    })
+
+    rightKey.on('down', () => {
+      if (this.selectedButton === 2) {
+        // Increase volume by 10%
+        const currentVolume = this.gameState.audio.musicVolume
+        const newVolume = Math.min(1, currentVolume + 0.1)
+
+        // Update volume
+        this.gameState.setMusicVolume(newVolume)
+        this.music.setVolume(newVolume)
+
+        // Update slider position
+        const sliderWidth = 200
+        const sliderX = this.cameras.main.centerX
+        const minX = sliderX - sliderWidth / 2
+        this.musicVolumeSlider.x = minX + newVolume * sliderWidth
+
+        // Update text
+        this.musicVolumeText.setText(`Volume: ${Math.round(newVolume * 100)}%`)
+
+        // Play sound
+        this.audio.playNote('A3', '32n')
+
+        // Save state to localStorage
+        this.gameState.saveToLocalStorage()
+      }
+    })
 
     // Handle escape key (back to menu)
     escKey.on('down', () => {

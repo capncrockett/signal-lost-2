@@ -49,6 +49,7 @@ export default class MenuScene extends Phaser.Scene {
       .rectangle(0, 0, 200, 40, 0x444444)
       .setOrigin(0.5)
       .setAlpha(0)
+      .setStrokeStyle(2, 0xffff00)
       .setData('test-id', 'focus-indicator')
       .setData('ci-test-id', 'menu-focus-indicator')
 
