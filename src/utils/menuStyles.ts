@@ -30,7 +30,17 @@ export const buttonFocusStyle = {
   align: 'center',
   padding: { x: 16, y: 8 },
   backgroundColor: '#444444',
+<<<<<<< HEAD
   shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 5, fill: true },
+=======
+  shadow: {
+    offsetX: 2,
+    offsetY: 2,
+    color: '#000000',
+    blur: 5,
+    fill: true,
+  },
+>>>>>>> 3fd83d6b16aee646c613c3984376954f83431e46
   stroke: '#ffff00',
   strokeThickness: 1,
 }
@@ -63,7 +73,17 @@ export const smallButtonFocusStyle = {
   align: 'center',
   padding: { x: 12, y: 6 },
   backgroundColor: '#444444',
+<<<<<<< HEAD
   shadow: { offsetX: 2, offsetY: 2, color: '#000000', blur: 5, fill: true },
+=======
+  shadow: {
+    offsetX: 2,
+    offsetY: 2,
+    color: '#000000',
+    blur: 5,
+    fill: true,
+  },
+>>>>>>> 3fd83d6b16aee646c613c3984376954f83431e46
   stroke: '#ffff00',
   strokeThickness: 1,
 }
