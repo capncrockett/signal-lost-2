@@ -34,6 +34,23 @@ Usage:
 ./scripts/deploy.sh v1.0.0
 ```
 
+### `monitor-deployment.js`
+
+Monitors the GitHub Pages deployment and checks for common issues, such as:
+
+- Site accessibility
+- Required files availability
+- Correct MIME types
+- Latest deployment status
+
+This script is useful for verifying that the GitHub Pages deployment is working correctly.
+
+Usage:
+
+```bash
+npm run deploy:monitor
+```
+
 ## Best Practices
 
 1. **Run TypeScript checks before committing code**:
