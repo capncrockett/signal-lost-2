@@ -53,6 +53,13 @@ export default class MenuScene extends Phaser.Scene {
       .setData('test-id', 'focus-indicator')
       .setData('ci-test-id', 'menu-focus-indicator')
 
+    // Add stroke style if available (might not be in test environment)
+    try {
+      this.focusIndicator.setStrokeStyle(2, 0xffff00)
+    } catch (error) {
+      console.warn('Could not set stroke style, likely running in test environment')
+    }
+
     // Start Game button
     this.startButton = this.add
       .text(this.cameras.main.centerX, this.cameras.main.height * 0.4, 'Start Game', buttonStyle)
@@ -312,6 +319,20 @@ export default class MenuScene extends Phaser.Scene {
     // Make sure it's visible and behind the text
     this.focusIndicator.setAlpha(1)
     this.focusIndicator.setDepth(button.depth - 1)
+
+    // Add a pulsing animation to make the focus indicator more visible
+    try {
+      this.tweens.add({
+        targets: this.focusIndicator,
+        alpha: { from: 0.7, to: 1 },
+        duration: 700,
+        ease: 'Sine.easeInOut',
+        yoyo: true,
+        repeat: -1,
+      })
+    } catch (error) {
+      console.warn('Could not add tween, likely running in test environment')
+    }
 
     // Apply focus style to the button
     button.setStyle(buttonFocusStyle)

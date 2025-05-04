@@ -59,6 +59,7 @@ vi.mock('phaser', () => {
             setInteractive: vi.fn().mockReturnThis(),
             on: vi.fn().mockReturnThis(),
             setStyle: vi.fn().mockReturnThis(),
+            setData: vi.fn().mockReturnThis(),
           }),
           rectangle: vi.fn().mockReturnValue({
             setOrigin: vi.fn().mockReturnThis(),
